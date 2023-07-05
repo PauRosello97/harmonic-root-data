@@ -1,0 +1,164 @@
+#Results {
+    padding: 20px;
+    background: #D9E5D6;
+    width: 95vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 11px;
+}
+
+th,
+td {
+    border-left: 1px solid black;
+    text-align: center;
+}
+
+.Table {
+    margin-top: 20px;
+    border: 1px solid black;
+}
+
+.Ratios {
+    border: 1px solid black;
+    padding: 10px;
+    width: 1200px;
+}
+
+.Ratios>.chordContainer>.chord {
+    display: flex;
+    flex-direction: row;
+    margin-top: 5px;
+    flex: 1;
+}
+
+.Ratios>.chordContainer>.chord>.name {
+    border: 1px solid black;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.Ratios .chordContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.spaceTag {
+    width: 200px;
+    text-align: right;
+    margin-right: 5px;
+}
+
+.winningTheoriesTag {
+    margin-left: 5px;
+    width: 200px;
+}
+
+#Theories {
+    border: 1px solid black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#Theories+#Theories {
+    margin-left: 0px;
+}
+
+.theoriesContainer {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 20px;
+}
+
+.title {
+    margin-bottom: 10px;
+}
+
+.theory {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 5px;
+    font-size: 11px;
+}
+
+.graphic {
+    display: flex;
+    flex-direction: row;
+    border-top: 1px solid black;
+}
+
+.bar {
+    width: 20px;
+    height: 100px;
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.barContent {
+    background: black;
+    width: 100%;
+}
+
+.Distribution,
+.DistributionFitting {
+    border: 1px solid black;
+    width: 300px;
+    height: 300px;
+    position: relative;
+    margin-bottom: 30px;
+    margin: 20px;
+}
+
+.DistributionFitting {
+    width: 600px !important;
+}
+
+.Distribution+.Distribution {
+    margin-left: 40px;
+}
+
+.ball {
+    width: 10px;
+    height: 10px;
+    background: black;
+    border-radius: 5px;
+    position: absolute;
+    transform: translateX(-50%);
+}
+
+.label {
+    position: absolute;
+    bottom: -20px;
+}
+
+#Confidence {
+    margin-left: 20px;
+    padding: 10px;
+    border: 1px solid black;
+}
+
+.conclusions {
+    padding: 20px;
+}
+
+.ballLabel {
+    font-size: 11px;
+    transform: translateX(13px) translateY(-3px);
+}
+
+.line {
+    background: red;
+    width: 5px;
+    height: 5px;
+    position: absolute;
+    border-radius: 50%;
+}
+
+#Tonalness {
+    border: 1px solid black;
+    padding: 10px;
+}

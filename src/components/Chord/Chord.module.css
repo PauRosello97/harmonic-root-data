@@ -1,0 +1,85 @@
+.row,
+.reverseRow {
+    display: flex;
+    padding: 5px;
+}
+
+.row {
+    flex-direction: row;
+}
+
+.reverseRow {
+    flex-direction: row-reverse;
+}
+
+.inversionWrapper,
+.selectedInversion {
+    padding: 20px 20px 10px 20px;
+    font-size: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.inversionWrapper,
+.selectedInversion,
+.noResponse,
+.selectedNoResponse {
+    margin: 20px;
+    border-radius: 5px;
+    -webkit-box-shadow: 0px 0px 6px 3px rgba(27, 37, 24, 0.25);
+    -moz-box-shadow: 0px 0px 6px 3px rgba(27, 37, 24, 0.25);
+    box-shadow: 0px 0px 6px 3px rgba(27, 37, 24, 0.25);
+    cursor: pointer;
+}
+
+.noResponse,
+.selectedNoResponse {
+    padding: 10px 20px;
+}
+
+.selectedNoResponse,
+.selectedInversion {
+    background: #BBCFB5;
+}
+
+.inversionSelector,
+.selectedSelector {
+    cursor: pointer;
+    text-align: center;
+}
+
+.selectedSelector {
+    font-weight: bold;
+}
+
+#Chord {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+@media (max-width: 1000px) {
+
+    .inversionWrapper,
+    .selectedInversion {
+        padding: 0 0 0 20px;
+        font-size: 30px;
+        flex-direction: row-reverse;
+    }
+
+    .row {
+        flex-direction: column;
+    }
+
+    .reverseRow {
+        flex-direction: column-reverse;
+    }
+
+    .inversionWrapper,
+    .selectedInversion,
+    .noResponse,
+    .selectedNoResponse {
+        margin: 5px;
+    }
+}
