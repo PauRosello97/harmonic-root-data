@@ -1,6 +1,8 @@
 import { gcd } from "mathjs";
 import { findFactors } from "./math";
 
+const primes = [2, 3, 5, 7, 11, 13, 17];
+
 interface Interval {
   num: number
   denom: number
@@ -17,7 +19,7 @@ export interface Chord extends Array<Interval> {}
 
 export const getSpace = (ns: number[]): Space => {
   const factors = findFactors(ns)
-  console.log(factors)
+  
   const [equave, ...dimensions] = factors;
 
   const space: Space = { equave, dimensions }
@@ -25,7 +27,7 @@ export const getSpace = (ns: number[]): Space => {
   return space
 }
 
-export const nameToChord = (factors: number[], equave: number): Chord => {
+export const factorsToChord = (factors: number[], equave: number): Chord => {
   
   const chord: Chord = [];
 
@@ -48,7 +50,32 @@ export const nameToChord = (factors: number[], equave: number): Chord => {
   return chord;
 }
 
-/* Harmonic distance */
+export const factorsToSuperChord = (factors: number[], equave: number): Chord => {
+  
+  const chord: Chord = [];
+
+  for (let j=0; j<factors.length-1; j++) {
+    for (let i=j+1; i<factors.length; i++) {
+      const n = factors[i]
+      const GCD = gcd(n, factors[j]);
+
+      let num = n / GCD
+      let denom = factors[j] / GCD
+  
+      if (factors[factors.length - 1] > factors[j]) { // If otonal
+        if (denom > num) num *= equave;
+      } else { // If utonal
+        const n = num;
+        num = denom;
+        denom = n;
+      }
+      chord.push({ num, denom })
+    }
+  }
+  return chord;
+}
+
+/* Tenney's Harmonic Distance */
 
 export const intervalHarmonicDistance = (interval: Interval): number => {
   const { num, denom } = interval
@@ -62,6 +89,56 @@ export const chordHarmonicDistance = (chord: Chord): number => {
   }
   return harmonicDistance
 }
+
+/* Barlow's Harmonicity */
+
+// TODO: Les funcions Javascript són correctes. Cal calcular TOTS els intervals. 
+
+export const chordHarmonicity = (chord: Chord): number => {
+  let totalHarmonicity = 0;
+  for (let i=0; i<chord.length; i++) {
+    totalHarmonicity += Math.abs(harmonicity(chord[i]));
+  }
+  return totalHarmonicity;
+}
+
+const harmonicity = (interval: Interval) => {
+  const q = indigestibility(interval.num);
+  const p = indigestibility(interval.denom);
+  const harmonicity = signum(p - q)/(p+q);
+
+  return harmonicity;
+}
+
+const signum = (n: number): number => {
+  if (n>0) return -1;
+  if (n<0) return 1;
+  return 0;
+}
+
+const indigestibility = (n: number) => {
+  const factors: number[] = new Array(primes.length).fill(0);
+
+  for (let i=0; i<primes.length; i++) {
+    const prime = primes[i];
+    if (n%prime === 0) {
+      n/=prime;
+      factors[i]++;
+      i--;
+    }
+  }
+
+  let indigestibility = 0;
+  for (let i=0; i<primes.length; i++) {
+    const nr = factors[i];
+    const pr = primes[i];
+    indigestibility += nr * Math.pow(pr-1, 2)/pr;
+  }  
+  indigestibility *= 2;
+
+  return indigestibility;
+}
+
 
 
 
