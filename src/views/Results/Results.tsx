@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import styles from "./Results.module.css";
 import chords, { chordNames, THEORIES, THEORIES_NAMES, PAU, dissonance, mod_tenney, harmonicity } from "../../data/chords";
 import json from '../../data/data.json';
-import { Space, chordHarmonicDistance, chordHarmonicity, getSpace, factorsToChord, factorsToSuperChord, chordDissonance } from "../../utils/models";
+import { Space, chordHarmonicDistance, chordHarmonicity, getSpace, factorsToChord, factorsToSuperChord, chordDissonance, harmonicEntropy } from "../../utils/models";
 
 /*
 Comprovar si hi ha alguna relació entre el temperament d'un espai i la confiança.
@@ -566,9 +566,10 @@ function Results() {
                 <tr>
                     <th>Chord</th>
                     <th>Intervals</th>
-                    <th>Tenney's Harmonic <br/> Distance</th>
                     <th>Barlow's <br/> Harmonicity</th>
                     <th>Sethares' <br/> Dissonance</th>
+                    <th>Tenney's <br/> Harmonic <br/> Distance</th>
+                    <th>Erlich's <br/> Harmonic <br/> Entropy</th>
                 </tr>
                 {chordNames.map((inversions: string[], i: number) => {
                     return <>
@@ -581,9 +582,10 @@ function Results() {
                             return <tr key={`${i}-${j}`}>
                                 <td>{inversion}</td>
                                 <td>{chord.map(interval => `${interval.num}/${interval.denom}`).join(", ")}</td>
-                                <td>{chordHarmonicDistance(chord).toFixed(4)}</td>
                                 <td>{chordHarmonicity(superChord).toFixed(4)}</td>
                                 <td>{chordDissonance(chord).toFixed(4)}</td>
+                                <td>{chordHarmonicDistance(chord).toFixed(4)}</td>
+                                <td>{harmonicEntropy(chord).toFixed(4)}</td>
                             </tr>
                         })}
                         <tr> <td>-</td></tr>
