@@ -92,8 +92,6 @@ export const chordHarmonicDistance = (chord: Chord): number => {
 
 /* Barlow's Harmonicity */
 
-// TODO: Les funcions Javascript són correctes. Cal calcular TOTS els intervals. 
-
 export const chordHarmonicity = (chord: Chord): number => {
   let totalHarmonicity = 0;
   for (let i=0; i<chord.length; i++) {
@@ -137,6 +135,67 @@ const indigestibility = (n: number) => {
   indigestibility *= 2;
 
   return indigestibility;
+}
+
+/* Sethares' Dissonance */
+
+const refFreq = 261.6256;
+
+export const chordDissonance = (chord: Chord) => {
+  const partialsArray = [1, 2, 3, 4, 5, 6, 7, 8];
+  const allPartials: number[][] = new Array(partialsArray.length * chord.length);
+
+  for (let i = 0; i < allPartials.length; i++) allPartials[i] = new Array(2);
+
+  let count: number = 0;
+  for (const partial of partialsArray) {
+    for (const interval of chord) {
+      allPartials[count][0] = (interval.num / interval.denom) * partial;
+      allPartials[count][1] = harmonicToLoudness(partial);
+      count++;
+    }
+  }
+
+  let diss : number = 0;
+  for (const partialA of allPartials) {
+    for (const partialB of allPartials) {
+      const f1 = refFreq * partialA[0];
+      const f2 = refFreq * partialB[0];
+      const l1 = partialA[1];
+      const l2 = partialB[1];
+      diss += dissonance(f1, f2, l1, l2);
+    }
+  }
+  
+  return diss;
+}
+
+const harmonicToLoudness = (x: number): number => {
+  const amp = 0.1+Math.pow(2, -(x-0.85));
+  return ampToLoudness(amp);
+}
+
+const ampToLoudness = (amp: number): number => {
+  const dB = 20 * Math.log(amp) / Math.log(10);
+  const loudness = Math.pow(2, dB / 10) / 16;
+  return loudness;
+}
+
+const dissonance = (f1: number, f2: number, l1: number, l2: number): number => {
+  const x = 0.24;
+  const s1 = 0.0207;
+  const s2 = 18.96;
+  const fmin = Math.min(f1, f2);
+  const fmax = Math.max(f1, f2);
+  const s = x / (s1 * fmin + s2);
+  const p = s * (fmax - fmin);
+
+  const b1 = 3.51;
+  const b2 = 5.75;
+
+  const l12 = Math.min(l1, l2);
+
+  return l12 * (Math.exp(-b1*p) - Math.exp(-b2*p));
 }
 
 
