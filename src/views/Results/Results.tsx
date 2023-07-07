@@ -360,10 +360,7 @@ function Results() {
                 {chordNames.map((chord: string[], i: number) => {
                     let space = spaces[Math.floor(i / 2)];
                     let noResponseRatio = getRatio(i, chord.length);
-                    let tonality = i % 2 == 0 ? "Otonal" : "Utonal";
-                    let winner = winners[i];
-                    let winningTheories: number[] = THEORIES[i][winner];
-                    let winningTheoriesNames = theoriesToNames(winningTheories);
+                    let tonality = i % 2 === 0 ? "Otonal" : "Utonal";
                     return <div key={i} className={styles.chordContainer} >
                         <div className={styles.spaceTag}>[{Math.floor(i / 2) + 1}] {tonality} {space}</div>
                         <div key={i} className={styles.chord}>
@@ -371,22 +368,34 @@ function Results() {
                                 let ratio = getRatio(i, j);
                                 if (ratio > 0) {
                                     let theories = THEORIES[i][j];
-                                    let theoriesNames = theoriesToNames(theories);
                                     return <div
                                         key={j}
                                         className={styles.name}
-                                        style={{ width: `${getRatio(i, j)}%`, background: theories?.includes(4) ? 'red' : '' }}
+                                        style={{
+                                            width: `${getRatio(i, j)}%`,
+                                            background: theories?.includes(4) ? 'red' : '',
+                                            minHeight: '40px',
+                                            display: 'flex',
+                                            flexDirection: 'row',
+                                            alignItems:'center'
+                                        }}
                                     >
-                                        {ratio > 0 && <div>{name} {theories.length > 0 && `(${theoriesNames.join(", ")})`} [{absoluteResponses[i][j]}] - {ratio.toFixed(2)}</div>}
+                                        {ratio > 10 && <div>{name} - {ratio.toFixed(2)}%</div>}
                                     </div>
                                 }
                             })}
                             {noResponseRatio > 0 &&
-                                <div className={styles.name} style={{ width: `${noResponseRatio}%` }}>
+                                <div
+                                    className={styles.name}
+                                    style={{
+                                        width: `${noResponseRatio}%`,display: 'flex',
+                                        flexDirection: 'row',
+                                        alignItems:'center'
+                                    }}
+                                >
                                     {noResponseRatio > 0 && `NS/NC[${absoluteResponses[i][chord.length]}] - ${noResponseRatio.toFixed(2)}`}
                                 </div>}
                         </div>
-                        <div className={styles.winningTheoriesTag}>{winningTheoriesNames.join(", ")}</div>
                     </div>
                 })}
             </div>
@@ -729,7 +738,7 @@ function Results() {
 
             </table>
 
-            <div className={styles.theoriesContainer}>
+            {/* <div className={styles.theoriesContainer}>
                 <Theories picked={ARR_ALL} title="All" tonality={ALL} />
                 <Theories picked={ARR_5_LIMIT} title="5-limit" tonality={ALL} />
                 <Theories picked={ARR_7_LIMIT} title="7-limit" tonality={ALL} />
@@ -745,24 +754,18 @@ function Results() {
             <div className={styles.theoriesContainer}>
                 <Confidence />
                 <AnswerPrecision />
-            </div>
+            </div> */}
             <div className={styles.theoriesContainer}>
                 {/*<Distribution />*/}
                 {/*<Fitting value="duration" />*/}
                 {/*<Fitting value="omsi" />*/}
             </div>
-            <div>
-                <h2>Tonalness</h2>
-                <Tonalness />
-            </div>
-            <div className={styles.conclusions}>
-                <div><b>Initial conclusions</b></div>
-                <ul>
-                    <li>Confidence is the same for the octave and the tritave, but precision is actually greater for the tritave = When moving to unexplored harmonies, the response is more uniform.</li>
-                    <li>Pau's success rate is similar or equal to the confidence in the different limits = The model's success equals human's confidence.</li>
-                    <li>Hi ha propietats musicals que es transmeten d'espai a espai, per tant és possible una teoria musical trans-espacial</li>
-                </ul>
-            </div>
+            {/*
+                <div>
+                    <h2>Tonalness</h2>
+                    <Tonalness />
+                </div>
+            */}
             <Ratios />
             <Table />
         </div >
