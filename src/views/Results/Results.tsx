@@ -1,8 +1,24 @@
 import { useEffect, useState } from "react";
 import styles from "./Results.module.css";
-import chords, { chordNames, THEORIES, THEORIES_NAMES, PAU, dissonance, mod_tenney, harmonicity } from "../../data/chords";
+import { chordNames, THEORIES, THEORIES_NAMES, PAU, dissonance, mod_tenney, harmonicity } from "../../data/chords";
 import json from '../../data/data.json';
-import { Space, chordHarmonicDistance, chordHarmonicity, getSpace, factorsToChord, factorsToSuperChord, chordDissonance, harmonicEntropy } from "../../utils/models";
+import {
+    chordHarmonicDistance,
+    chordHarmonicity,
+    factorsToSpace,
+    factorsToChord,
+    factorsToSuperChord,
+    chordDissonance,
+    harmonicEntropy,
+    intervalToCoord,
+    coordToInterval,
+    translateCoord,
+    symmetricHarmonicity,
+    symmetricHarmonicDistance,
+    translateChord,
+    chordToSuperChord
+} from "../../utils/models";
+import { Interval, Chord, Space } from "../../utils/models";
 
 /*
 Comprovar si hi ha alguna relació entre el temperament d'un espai i la confiança.
@@ -133,7 +149,6 @@ function Results() {
         for (let i = 0; i < _tonalness.length / 2; i++) {
             let T = (_tonalness[i * 2][1] + _tonalness[i * 2 + 1][1]) / 2;
             _spaceTonalness.push(T);
-            //console.log(spaces[i], T);
         }
 
         _tonalness.sort((a, b) => b[1] - a[1]);
@@ -560,32 +575,51 @@ function Results() {
         )
     }
 
+    const factors: number[] = "4:6:7".split(":").map((n: string) => parseInt(n))
+    const space: Space = factorsToSpace(factors)
+    const chord = factorsToChord(factors, space.equave)
+    symmetricHarmonicity(chord, space).toFixed(4)
+
     return (
         <div id={styles.Results}>
             <table>
                 <tr>
                     <th>Chord</th>
                     <th>Intervals</th>
+                    <th>Translated</th>
+                    <th>Super</th>
+                    <th>Translated Super</th>
                     <th>Barlow's <br/> Harmonicity</th>
                     <th>Sethares' <br/> Dissonance</th>
                     <th>Tenney's <br/> Harmonic <br/> Distance</th>
                     <th>Erlich's <br/> Harmonic <br/> Entropy</th>
+                    <th />
+                    <th>Distance</th>
+                    <th>Harmonicity</th>
                 </tr>
                 {chordNames.map((inversions: string[], i: number) => {
                     return <>
                         {inversions.map((inversion: string, j: number) => {
                             const factors: number[] = inversion.split(":").map((n: string) => parseInt(n))
-                            const space: Space = getSpace(factors)
+                            const space: Space = factorsToSpace(factors)
                             const chord = factorsToChord(factors, space.equave)
-                            const superChord = factorsToSuperChord(factors, space.equave)
+                            const translatedChord = translateChord(chord, space)
+                            const superChord = chordToSuperChord(chord, false)
+                            const translatedSuperChord = chordToSuperChord(translatedChord, true)
 
                             return <tr key={`${i}-${j}`}>
                                 <td>{inversion}</td>
                                 <td>{chord.map(interval => `${interval.num}/${interval.denom}`).join(", ")}</td>
+                                <td>{translatedChord.map(interval => `${interval.num}/${interval.denom}`).join(", ")}</td>
+                                <td>{superChord.map(interval => `${interval.num}/${interval.denom}`).join(", ")}</td>
+                                <td>{translatedSuperChord.map(interval => `${interval.num}/${interval.denom}`).join(", ")}</td>
                                 <td>{chordHarmonicity(superChord).toFixed(4)}</td>
                                 <td>{chordDissonance(chord).toFixed(4)}</td>
                                 <td>{chordHarmonicDistance(chord).toFixed(4)}</td>
                                 <td>{harmonicEntropy(chord).toFixed(4)}</td>
+                                <td />
+                                <td>{symmetricHarmonicDistance(superChord, space).toFixed(4)}</td>
+                                <td>{symmetricHarmonicity(chord, space).toFixed(4)}</td>
                             </tr>
                         })}
                         <tr> <td>-</td></tr>

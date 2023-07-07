@@ -49,3 +49,19 @@ const isPrime = (number: number): boolean => {
 
   return true;
 };
+
+export const getFactors = (number: number) => {
+  var primeFactors = [];
+  var divisor = 2;
+  
+  while (number >= 2) {
+    if (number % divisor === 0) {
+      primeFactors.push(divisor); // Add the divisor as a prime factor
+      number = number / divisor;
+    } else {
+      divisor++;
+    }
+  }
+  
+  return primeFactors;
+}
