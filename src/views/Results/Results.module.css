@@ -10,6 +10,7 @@
 
 th,
 td {
+    padding: 0 5px;
     border-left: 1px solid black;
     text-align: center;
 }
@@ -161,4 +162,8 @@ td {
 #Tonalness {
     border: 1px solid black;
     padding: 10px;
+}
+
+.b {
+    font-weight: bold;
 }

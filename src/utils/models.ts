@@ -290,7 +290,7 @@ export const chordDissonance = (chord: Chord) => {
 
 /* Harmonic Entropy */
 
-export const harmonicEntropy = (chord: Chord): number => {
+export const chordHarmonicEntropy = (chord: Chord): number => {
 
   const intervals: number[][] = [
     [1, 1],   [27, 26], [26, 25], [25, 24], [24, 23], [23, 22], [22, 21], [21, 20], [20, 19], 

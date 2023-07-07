@@ -8,7 +8,7 @@ import {
     factorsToSpace,
     factorsToChord,
     chordDissonance,
-    harmonicEntropy,
+    chordHarmonicEntropy,
     symmetricHarmonicity,
     symmetricHarmonicDistance,
     chordToSuperChord,
@@ -40,17 +40,25 @@ interface AnswerData {
     harmonicDistance: number,
     harmonicEntropy: number,
     symmetricHarmonicDistance: number,
-    symmetricHarmonicity: number
+    symmetricHarmonicity: number,
+    votes: number
 }
 
 interface QuestionData {
     answers: AnswerData[],
-    space: Space
+    space: Space,
+    EHarmonicity: number,
+    EDissonance: number,
+    EHarmonicDistance: number,
+    EHarmonicEntropy : number,
+    ESymmetricHarmonicDistance: number,
+    ESymmetricHarmonicity: number,
+    votes: number
 }
 
 function Results() {
     const spaces: string[] = ["[3,5]→2", "[3,7]→2", "[3,11]→2", "[5,7]→2", "[5,11]→2", "[5,7]→3", "[5,11]→3", "[7,11]→3", "[3,5,7]→2", "[3,5,7,11]→2"];
-    const [data, setData] = useState<any[]>([]);
+    const [votesData, setVotesData] = useState<any[]>([]);
     const [countResponses, setCountResponses] = useState<number[]>([]);
     const [totalResponses, setTotalResponses] = useState<number>(1);
     const [absoluteResponses, setAbsoluteResponses] = useState<number[][]>([]);
@@ -66,39 +74,76 @@ function Results() {
     const [tonalnessAverage, setTonalnessAverage] = useState<number>();
     const [modelData, setModelData] = useState<QuestionData[]>([]);
 
-    useEffect(()=>{
-        console.log(modelData)
-    }, [modelData])
-
-
     useEffect(() => {
-        setData(json);
-        setModelData(chordNames.map((question: string[]): QuestionData => {
-            let space: Space = { equave: 0, dimensions: [] }
+        setVotesData(json);
 
-            const answers = question.map((answer: string): AnswerData => {
+        setModelData(chordNames.map((question: string[], i: number): QuestionData => {
+            /* Votes */
+            const votes: number[] = Array(question.length).fill(0)
+            let totalVotes = 0;
+            json.forEach((participant) => {
+                const vote = participant.responses[i];
+                if (vote !== -1){
+                    votes[vote] ++
+                    totalVotes ++;
+                }
+            })
+
+            /* Models */
+            let space: Space = { equave: 0, dimensions: [] }
+            let EHarmonicity = 0
+            let EDissonance = 0
+            let EHarmonicDistance = 0
+            let EHarmonicEntropy = 0
+            let ESymmetricHarmonicDistance = 0
+            let ESymmetricHarmonicity = 0
+
+            const answers = question.map((answer: string, j: number): AnswerData => {
+
                 const factors: number[] = answer.split(":").map((n: string) => parseInt(n))
                 space = factorsToSpace(factors)
                 const chord = factorsToChord(factors, space.equave)
                 const superChord = chordToSuperChord(chord, false)
+
+                const harmonicity = chordHarmonicity(superChord)
+                const dissonance = chordDissonance(chord)
+                const harmonicDistance = chordHarmonicDistance(chord, space)
+                const harmonicEntropy = chordHarmonicEntropy(chord)
+                const symmetricHD = symmetricHarmonicDistance(chord, space)
+                const symmetricHarm = symmetricHarmonicity(chord, space)
+
+                EHarmonicity += harmonicity
+                EDissonance += dissonance
+                EHarmonicDistance += harmonicDistance
+                EHarmonicEntropy += harmonicEntropy
+                ESymmetricHarmonicDistance += symmetricHD
+                ESymmetricHarmonicity += symmetricHarm
 
                 return {
                     name: answer, 
                     space,
                     chord,
                     superChord,
-                    harmonicity: chordHarmonicity(superChord),
-                    dissonance: chordDissonance(chord),
-                    harmonicDistance: chordHarmonicDistance(chord, space),
-                    harmonicEntropy: harmonicEntropy(chord),
-                    symmetricHarmonicDistance : symmetricHarmonicDistance(chord, space),
-                    symmetricHarmonicity: symmetricHarmonicity(chord, space)
+                    harmonicity,
+                    dissonance,
+                    harmonicDistance,
+                    harmonicEntropy,
+                    symmetricHarmonicDistance: symmetricHD,
+                    symmetricHarmonicity: symmetricHarm,
+                    votes: votes[j]
                 }
             })
             
             const questionData: QuestionData = {
-                answers: answers,
-                space
+                answers,
+                space,
+                EHarmonicity,
+                EDissonance,
+                EHarmonicDistance,
+                EHarmonicEntropy,
+                ESymmetricHarmonicDistance,
+                ESymmetricHarmonicity,
+                votes: totalVotes
             }
 
             return questionData
@@ -107,9 +152,9 @@ function Results() {
 
 
     useEffect(() => {
-        setTotalResponses(data.length);
-        let _countResponses: number[] = new Array(data.length);
-        let _absoluteResponses: number[][] = new Array(data.length);
+        setTotalResponses(votesData.length);
+        let _countResponses: number[] = new Array(votesData.length);
+        let _absoluteResponses: number[][] = new Array(votesData.length);
 
         chordNames.forEach((chord: string[], i: number) => {
             _absoluteResponses[i] = [];
@@ -117,16 +162,16 @@ function Results() {
             _absoluteResponses[i].push(0)
         })
 
-        data.forEach((person) => {
+        votesData.forEach((person) => {
             person.responses.forEach((response: number, i: number) => {
                 if (!_countResponses[i]) _countResponses[i] = 0;
-                if (response != -1) _countResponses[i]++;
+                if (response !== -1) _countResponses[i]++;
 
                 if (!_absoluteResponses[i]) {
                     _absoluteResponses[i] = new Array(chordNames[i].length + 1);
                 }
 
-                let k = response == -1 ? chordNames[i].length : response;
+                let k = response === -1 ? chordNames[i].length : response;
                 if (!_absoluteResponses[i][k]) _absoluteResponses[i][k] = 0;
                 _absoluteResponses[i][k]++;
 
@@ -145,7 +190,7 @@ function Results() {
                     max_index = i;
                 }
             })
-            if (max_index == question.length - 1) max_index = -1;
+            if (max_index === question.length - 1) max_index = -1;
             return max_index;
         });
         setWinners(_winners);
@@ -160,9 +205,9 @@ function Results() {
         let tonalnessOctaveCount: number = 0;
         let tonalnessTritaveCount: number = 0;
         let tonalnessAverageCount: number = 0;
-        data.forEach((subject, subjectI) => {
+        votesData.forEach((subject, subjectI) => {
             subject.responses.forEach((response: number, questionN: number) => {
-                if (response != -1) {
+                if (response !== -1) {
 
                     let n = Math.floor(questionN / 2) + 1;
                     if (ARR_5_LIMIT.includes(n)) tonalness5limitCount++;
@@ -175,25 +220,25 @@ function Results() {
                     if (tonalnessCounter[questionN]) tonalnessCounter[questionN]++;
                     else tonalnessCounter[questionN] = 1;
 
-                    if (questionN % 2 == 0) tonalnessOtonalityCount++;
+                    if (questionN % 2 === 0) tonalnessOtonalityCount++;
                     else tonalnessUtonalityCount++;
                 }
             });
         });
 
-        setTonalnessOtonality(100 * tonalnessOtonalityCount / (data.length * 10));
-        setTonalnessUtonality(100 * tonalnessUtonalityCount / (data.length * 10));
+        setTonalnessOtonality(100 * tonalnessOtonalityCount / (votesData.length * 10));
+        setTonalnessUtonality(100 * tonalnessUtonalityCount / (votesData.length * 10));
 
-        setTonalnessOctave(100 * tonalnessOctaveCount / (2 * ARR_OCTAVE.length * data.length));
-        setTonalnessTritave(100 * tonalnessTritaveCount / (2 * ARR_TRITAVE.length * data.length));
+        setTonalnessOctave(100 * tonalnessOctaveCount / (2 * ARR_OCTAVE.length * votesData.length));
+        setTonalnessTritave(100 * tonalnessTritaveCount / (2 * ARR_TRITAVE.length * votesData.length));
 
-        setTonalnessAverage(100 * tonalnessAverageCount / (20 * data.length));
+        setTonalnessAverage(100 * tonalnessAverageCount / (20 * votesData.length));
 
-        setTonalness5limit(100 * tonalness5limitCount / (2 * ARR_5_LIMIT.length * data.length));
-        setTonalness7limit(100 * tonalness7limitCount / (2 * ARR_7_LIMIT.length * data.length));
-        setTonalness11limit(100 * tonalness11limitCount / (2 * ARR_11_LIMIT.length * data.length));
+        setTonalness5limit(100 * tonalness5limitCount / (2 * ARR_5_LIMIT.length * votesData.length));
+        setTonalness7limit(100 * tonalness7limitCount / (2 * ARR_7_LIMIT.length * votesData.length));
+        setTonalness11limit(100 * tonalness11limitCount / (2 * ARR_11_LIMIT.length * votesData.length));
 
-        let _tonalness = tonalnessCounter.map((count: number, i: number) => [i, 100 * count / data.length]);
+        let _tonalness = tonalnessCounter.map((count: number, i: number) => [i, 100 * count / votesData.length]);
         let _spaceTonalness = [];
 
         for (let i = 0; i < _tonalness.length / 2; i++) {
@@ -203,7 +248,7 @@ function Results() {
 
         _tonalness.sort((a, b) => b[1] - a[1]);
         setTonalness(_tonalness);
-    }, [data]);
+    }, [votesData]);
 
     useEffect(() => {
         // What's the model guess for each question?
@@ -219,7 +264,7 @@ function Results() {
         let txt = "";
         absoluteResponses.forEach((question, i) => {
             for (let option = 0; option < question.length - 1; option++) {
-                let percentage = 100 * question[option] / data.length;
+                let percentage = 100 * question[option] / votesData.length;
                 let diss = dissonance[i][option];
                 //txt += percentage.toFixed(4) + " " + diss.toFixed(4) + "\n";
                 txt += diss.toFixed(4) + "\n";
@@ -231,7 +276,7 @@ function Results() {
         txt = "";
         absoluteResponses.forEach((question, i) => {
             for (let option = 0; option < question.length - 1; option++) {
-                let percentage = 100 * question[option] / data.length;
+                let percentage = 100 * question[option] / votesData.length;
                 let diss = mod_tenney[i][option];
                 //txt += percentage.toFixed(4) + " " + diss.toFixed(4) + "\n";
             }
@@ -242,7 +287,7 @@ function Results() {
         txt = "";
         absoluteResponses.forEach((question, i) => {
             for (let option = 0; option < question.length - 1; option++) {
-                let percentage = 100 * question[option] / data.length;
+                let percentage = 100 * question[option] / votesData.length;
                 let diss = harmonicity[i][option];
                 //txt += percentage.toFixed(4) + " " + diss.toFixed(4) + "\n";
                 txt += diss.toFixed(4) + "\n";
@@ -265,7 +310,7 @@ function Results() {
                     </tr>
                 </thead>
                 <tbody>
-                    {data.map((item: any, i: number) => {
+                    {votesData.map((item: any, i: number) => {
                         const milliseconds = item.date.seconds * 1000 + Math.floor(item.date.nanoseconds / 1000000);
                         const date: Date = new Date(milliseconds);
                         return <tr key={i}>
@@ -287,7 +332,7 @@ function Results() {
                         <td />
                         <td />
                         {countResponses.map((item: any, i: number) => {
-                            return <td key={i}>{(100 * item / data.length).toFixed(0)}%</td>
+                            return <td key={i}>{(100 * item / votesData.length).toFixed(0)}%</td>
                         })}
                     </tr>
                 </tbody>
@@ -353,7 +398,7 @@ function Results() {
 
         let min_value = 10000;
         let max_value = 0;
-        let values: number[] = data.map(item => {
+        let values: number[] = votesData.map(item => {
             let v: number = item[value];
             if (v < min_value) min_value = v;
             if (v > max_value) max_value = v;
@@ -361,7 +406,7 @@ function Results() {
         });
         let min_confidence = 1000;
         let max_confidence = 0;
-        let confidences: number[] = data.map(item => {
+        let confidences: number[] = votesData.map(item => {
             let total = 0;
             let count = 0;
             item.responses.forEach((response: number) => {
@@ -466,9 +511,9 @@ function Results() {
         let total = 0;
         let countNegative = 0;
         arr.forEach((questionN: any) => {
-            data.forEach(subject => {
+            votesData.forEach(subject => {
                 total++;
-                if (subject.responses[questionN] == -1) countNegative++;
+                if (subject.responses[questionN] === -1) countNegative++;
             })
         });
         let confidence = 1 - countNegative / total;
@@ -498,7 +543,7 @@ function Results() {
         let total = 0;
         let countWinner = 0;
         arr.forEach((questionN: any) => {
-            data.forEach(subject => {
+            votesData.forEach(subject => {
                 total++;
                 if (subject.responses[questionN] == winners[questionN]) countWinner++;
             })
@@ -535,7 +580,7 @@ function Results() {
 
         let min_value = 10000;
         let max_value = 0;
-        let values: number[] = data.map(item => {
+        let values: number[] = votesData.map(item => {
             let v: number = item[value];
             if (v < min_value) min_value = v;
             if (v > max_value) max_value = v;
@@ -545,7 +590,7 @@ function Results() {
 
         let min_fitting = 1000;
         let max_fitting = 0;
-        let fittings: number[] = data.map(item => {
+        let fittings: number[] = votesData.map(item => {
             let total = 0;
             let count = 0;
             item.responses.forEach((response: number, i: number) => {
@@ -631,36 +676,54 @@ function Results() {
                 <tr>
                     <th>Chord</th>
                     <th>Intervals</th>
-                    <th>Barlow's <br/> Harmonicity</th>
-                    <th>Sethares' <br/> Dissonance</th>
-                    <th>Tenney's <br/> Harmonic <br/> Distance</th>
-                    <th>Erlich's <br/> Harmonic <br/> Entropy</th>
+                    <th colSpan={2}>Barlow's <br/> Harmonicity</th>
+                    <th colSpan={2}>Sethares' <br/> Dissonance</th>
+                    <th colSpan={2}>Tenney's <br/> Harmonic <br/> Distance</th>
+                    <th colSpan={2}>Erlich's <br/> Harmonic <br/> Entropy</th>
                     <th />
-                    <th>Distance</th>
-                    <th>Harmonicity</th>
+                    <th colSpan={2}>Symmetric <br/> Harmonic <br/> Distance</th>
+                    <th colSpan={2}>Symmetric <br/>Harmonicity</th>
+                    <th />
+                    <th colSpan={2}>Votes</th>
                 </tr>
                 {modelData.map((question: QuestionData, i: number) => {
                     return <>
-                        <tr>
-                            <td>
-                                <b>
-                                    {`[${question.space.dimensions.join(", ")}]->${question.space.equave}`}
-                                </b>
-                            </td>
+                        <tr style={{fontWeight: 'bold'}}>
+                            <td> {`[${question.space.dimensions.join(", ")}]->${question.space.equave}`} </td>
                         </tr>
                         {question.answers.map((answer: AnswerData, j: number) => {
                             return <tr key={`${i}-${j}`}>
-                                <td>{answer.name}</td>
+                                <td className={styles.b}>{answer.name}</td>
                                 <td>{answer.chord.map((i: Interval) => `${i.num}/${i.denom}`).join(", ")}</td>
                                 <td>{answer.harmonicity.toFixed(4)}</td>
+                                <td className={styles.b}>{(100*answer.harmonicity/question.EHarmonicity).toFixed(2)}%</td>
                                 <td>{answer.dissonance.toFixed(4)}</td>
+                                <td className={styles.b}>{(100*answer.dissonance/question.EDissonance).toFixed(2)}%</td>
                                 <td>{answer.harmonicDistance.toFixed(4)}</td>
+                                <td className={styles.b}>{(100*answer.harmonicDistance/question.EHarmonicDistance).toFixed(2)}%</td>
                                 <td>{answer.harmonicEntropy.toFixed(4)}</td>
+                                <td className={styles.b}>{(100*answer.harmonicEntropy/question.EHarmonicEntropy).toFixed(2)}%</td>
                                 <td/>
                                 <td>{answer.symmetricHarmonicDistance.toFixed(4)}</td>
+                                <td className={styles.b}>{(100*answer.symmetricHarmonicDistance/question.ESymmetricHarmonicDistance).toFixed(2)}%</td>
                                 <td>{answer.symmetricHarmonicity.toFixed(4)}</td>
+                                <td className={styles.b}>{(100*answer.symmetricHarmonicity/question.ESymmetricHarmonicity).toFixed(2)}%</td>
+                                <td />
+                                <td>{answer.votes}</td>
+                                <td>{(100*answer.votes/question.votes).toFixed(2)}%</td>
                             </tr>
                         })}
+                        <tr>
+                            <td />
+                            <td />
+                            <td colSpan={2}>Σ = {question.EHarmonicity.toFixed(4)}</td>
+                            <td colSpan={2}>Σ = {question.EDissonance.toFixed(4)}</td>
+                            <td colSpan={2}>Σ = {question.EHarmonicDistance.toFixed(4)}</td>
+                            <td colSpan={2}>Σ = {question.EHarmonicEntropy.toFixed(4)}</td>
+                            <td />
+                            <td colSpan={2}>Σ = {question.ESymmetricHarmonicDistance.toFixed(4)}</td>
+                            <td colSpan={2}>Σ = {question.ESymmetricHarmonicity.toFixed(4)}</td>
+                        </tr>
                     </>
                 })}
 
