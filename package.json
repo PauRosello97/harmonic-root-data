@@ -14,7 +14,6 @@
     "@types/node": "^16.11.59",
     "@types/react": "^18.0.20",
     "@types/react-dom": "^18.0.6",
-    "firebase": "^9.10.0",
     "font-awesome": "^4.7.0",
     "howler": "^2.2.3",
     "mathjs": "^11.2.1",
