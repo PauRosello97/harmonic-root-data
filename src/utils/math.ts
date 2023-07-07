@@ -48,3 +48,31 @@ export const getFactors = (number: number) => {
   
   return primeFactors;
 }
+
+export const calculateCorrelation = (coordinates: {x: number, y: number}[]) => {
+  const n = coordinates.length;
+
+  // Calculate the means of X and Y
+  const sumX = coordinates.reduce((sum, point) => sum + point.x, 0);
+  const sumY = coordinates.reduce((sum, point) => sum + point.y, 0);
+  const meanX = sumX / n;
+  const meanY = sumY / n;
+
+  // Calculate the deviations and products
+  let sumProduct = 0;
+  let sumSquaredDeviationX = 0;
+  let sumSquaredDeviationY = 0;
+
+  for (let i = 0; i < n; i++) {
+    const deviationX = coordinates[i].x - meanX;
+    const deviationY = coordinates[i].y - meanY;
+    sumProduct += deviationX * deviationY;
+    sumSquaredDeviationX += deviationX ** 2;
+    sumSquaredDeviationY += deviationY ** 2;
+  }
+
+  // Calculate the correlation coefficient
+  const correlation = sumProduct / Math.sqrt(sumSquaredDeviationX * sumSquaredDeviationY);
+
+  return correlation;
+}

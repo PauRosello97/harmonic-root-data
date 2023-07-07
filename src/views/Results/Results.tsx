@@ -15,6 +15,7 @@ import {
     Chord
 } from "../../utils/models";
 import { Interval, Space } from "../../utils/models";
+import { calculateCorrelation } from "../../utils/math";
 
 /*
 Comprovar si hi ha alguna relació entre el temperament d'un espai i la confiança.
@@ -73,6 +74,13 @@ function Results() {
     const [tonalnessTritave, setTonalnessTritave] = useState<number>();
     const [tonalnessAverage, setTonalnessAverage] = useState<number>();
     const [modelData, setModelData] = useState<QuestionData[]>([]);
+
+    const [harmonicDistanceC, setHarmonicDistanceC] = useState<number>(0);
+    const [harmonicityC, setHarmonicityC] = useState<number>(0);
+    const [dissonanceC, setDissonanceC] = useState<number>(0);
+    const [entropyC, setEntropyC] = useState<number>(0);
+    const [symmetricDistanceC, setSymmetricDistanceC] = useState<number>(0);
+    const [symmetricHarmonicityC, setSymmetricHarmonicityC] = useState<number>(0);
 
     useEffect(() => {
         setVotesData(json);
@@ -149,6 +157,36 @@ function Results() {
             return questionData
         }))
     }, []);
+
+    useEffect(() => {
+        interface Coordinate { x: number, y: number }
+        const distances: Coordinate[] = []
+        const harmonicities: Coordinate[] = []
+        const dissonances: Coordinate[] = []
+        const entropies: Coordinate[] = []
+        const symmetricHarmonicities: Coordinate[] = []
+        const symmetricDistances: Coordinate[] = []
+
+        modelData.forEach(question => {
+            question.answers.forEach(answer => {
+                const y = answer.votes / question.votes
+                distances.push({ x: answer.harmonicDistance / question.EHarmonicDistance, y })
+                harmonicities.push({ x: answer.harmonicity / question.EHarmonicity, y })
+                dissonances.push({ x: answer.dissonance / question.EDissonance, y })
+                entropies.push({ x: answer.harmonicEntropy / question.EHarmonicEntropy, y })
+                symmetricHarmonicities.push({ x: answer.symmetricHarmonicity / question.ESymmetricHarmonicity, y })
+                symmetricDistances.push({ x: answer.symmetricHarmonicDistance / question.ESymmetricHarmonicDistance, y })
+            })
+        })
+
+        setHarmonicDistanceC(calculateCorrelation(distances))
+        setHarmonicityC(calculateCorrelation(harmonicities))
+        setDissonanceC(calculateCorrelation(dissonances))
+        setEntropyC(calculateCorrelation(entropies))
+        setSymmetricHarmonicityC(calculateCorrelation(symmetricHarmonicities))
+        setSymmetricDistanceC(calculateCorrelation(symmetricDistances))
+
+    }, [modelData])
 
 
     useEffect(() => {
@@ -681,6 +719,34 @@ function Results() {
 
     return (
         <div id={styles.Results}>
+
+            <table>
+                <tr>
+                    <td>Symmetric Harmonicity</td>
+                    <td>{symmetricHarmonicityC.toFixed(4)}</td>
+                </tr>
+                <tr>
+                    <td>Symmetric Harmonic Distance</td>
+                    <td>{symmetricDistanceC.toFixed(4)}</td>
+                </tr>
+                <tr>
+                    <td>Harmonicity</td>
+                    <td>{harmonicityC.toFixed(4)}</td>
+                </tr>
+                <tr>
+                    <td>Entropy</td>
+                    <td>{entropyC.toFixed(4)}</td>
+                </tr>
+                <tr>
+                    <td>Harmonic Distance</td>
+                    <td>{harmonicDistanceC.toFixed(4)}</td>
+                </tr>
+                <tr>
+                    <td>Dissonance</td>
+                    <td>{dissonanceC.toFixed(4)}</td>
+                </tr>
+            </table>
+
             <table>
                 <tr>
                     <th>Chord</th>
