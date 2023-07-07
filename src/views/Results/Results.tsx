@@ -44,6 +44,7 @@ interface AnswerData {
     symmetricHarmonicDistance: number,
     symmetricHarmonicity: number,
     symmetricEntropy: number,
+    relativePeriodicity: number,
     votes: number
 }
 
@@ -57,6 +58,7 @@ interface QuestionData {
     ESymmetricHarmonicDistance: number,
     ESymmetricHarmonicity: number,
     ESymmetricEntropy: number,
+    ERelativePeriodicity: number,
     votes: number
 }
 
@@ -85,6 +87,7 @@ function Results() {
     const [symmetricDistanceC, setSymmetricDistanceC] = useState<number>(0);
     const [symmetricHarmonicityC, setSymmetricHarmonicityC] = useState<number>(0);
     const [symmetricEntropyC, setSymmetricEntropyC] = useState<number>(0);
+    const [relativePeriodicityC, setRelativePeriodicityC] = useState<number>(0);
 
     useEffect(() => {
         setVotesData(json);
@@ -110,6 +113,7 @@ function Results() {
             let ESymmetricHarmonicDistance = 0
             let ESymmetricHarmonicity = 0
             let ESymmetricEntropy = 0
+            let ERelativePeriodicity = 0
 
             const answers = question.map((answer: string, j: number): AnswerData => {
 
@@ -125,6 +129,7 @@ function Results() {
                 const symmetricHD = symmetricHarmonicDistance(chord, space)
                 const symmetricHarm = symmetricHarmonicity(chord, space)
                 const symmetricEntropy = symmetricHarmonicEntropy(chord, space)
+                const relativePeriodicity = factors[0]
 
                 EHarmonicity += harmonicity
                 EDissonance += dissonance
@@ -133,6 +138,7 @@ function Results() {
                 ESymmetricHarmonicDistance += symmetricHD
                 ESymmetricHarmonicity += symmetricHarm
                 ESymmetricEntropy += symmetricEntropy
+                ERelativePeriodicity += relativePeriodicity
 
                 return {
                     name: answer,
@@ -146,6 +152,7 @@ function Results() {
                     symmetricHarmonicDistance: symmetricHD,
                     symmetricHarmonicity: symmetricHarm,
                     symmetricEntropy: symmetricEntropy,
+                    relativePeriodicity,
                     votes: votes[j]
                 }
             })
@@ -160,6 +167,7 @@ function Results() {
                 ESymmetricHarmonicDistance,
                 ESymmetricHarmonicity,
                 ESymmetricEntropy,
+                ERelativePeriodicity,
                 votes: totalVotes
             }
 
@@ -176,6 +184,7 @@ function Results() {
         const symmetricHarmonicities: Coordinate[] = []
         const symmetricDistances: Coordinate[] = []
         const symmetricEntropies: Coordinate[] = []
+        const relativePeriodicities: Coordinate[] = []
 
         modelData.forEach(question => {
             question.answers.forEach(answer => {
@@ -187,6 +196,7 @@ function Results() {
                 symmetricHarmonicities.push({ x: answer.symmetricHarmonicity / question.ESymmetricHarmonicity, y })
                 symmetricDistances.push({ x: answer.symmetricHarmonicDistance / question.ESymmetricHarmonicDistance, y })
                 symmetricEntropies.push({ x: answer.symmetricEntropy / question.ESymmetricEntropy, y })
+                relativePeriodicities.push({ x: answer.relativePeriodicity / question.ERelativePeriodicity, y })
             })
         })
 
@@ -197,6 +207,7 @@ function Results() {
         setSymmetricHarmonicityC(calculateCorrelation(symmetricHarmonicities))
         setSymmetricDistanceC(calculateCorrelation(symmetricDistances))
         setSymmetricEntropyC(calculateCorrelation(symmetricEntropies))
+        setRelativePeriodicityC(calculateCorrelation(relativePeriodicities))
 
     }, [modelData])
 
@@ -604,7 +615,7 @@ function Results() {
         arr.forEach((questionN: any) => {
             votesData.forEach(subject => {
                 total++;
-                if (subject.responses[questionN] == winners[questionN]) countWinner++;
+                if (subject.responses[questionN] === winners[questionN]) countWinner++;
             })
         });
         let precision = countWinner / total;
@@ -654,7 +665,7 @@ function Results() {
             let count = 0;
             item.responses.forEach((response: number, i: number) => {
                 total++;
-                if (response != -1 && THEORIES[i][response].includes(4)) count++
+                if (response !== -1 && THEORIES[i][response].includes(4)) count++
                 //if (response != -1 && THEORIES[i][response].length > 0) count++;
             });
             let fitting = count / total;
@@ -731,99 +742,109 @@ function Results() {
 
     return (
         <div id={styles.Results}>
+            <div className={styles.Section}>
+                <table>
+                    <tr>
+                        <td>Symmetric Harmonicity</td>
+                        <td>{symmetricHarmonicityC.toFixed(4)}</td>
+                    </tr>
+                    <tr>
+                        <td>Symmetric Harmonic Distance</td>
+                        <td>{symmetricDistanceC.toFixed(4)}</td>
+                    </tr>
+                    <tr>
+                        <td>Harmonicity</td>
+                        <td>{harmonicityC.toFixed(4)}</td>
+                    </tr>
+                    <tr>
+                        <td>Entropy</td>
+                        <td>{entropyC.toFixed(4)}</td>
+                    </tr>
+                    <tr>
+                        <td>Harmonic Distance</td>
+                        <td>{harmonicDistanceC.toFixed(4)}</td>
+                    </tr>
+                    <tr>
+                        <td>Dissonance</td>
+                        <td>{dissonanceC.toFixed(4)}</td>
+                    </tr>
+                    <tr>
+                        <td>Relative Periodicity</td>
+                        <td>{relativePeriodicityC.toFixed(4)}</td>
+                    </tr>
+                    <tr>
+                        <td>Symmetric Entropy</td>
+                        <td>{symmetricEntropyC.toFixed(4)}</td>
+                    </tr>
+                </table>
+            </div>
 
-            <table>
-                <tr>
-                    <td>Symmetric Harmonicity</td>
-                    <td>{symmetricHarmonicityC.toFixed(4)}</td>
-                </tr>
-                <tr>
-                    <td>Symmetric Harmonic Distance</td>
-                    <td>{symmetricDistanceC.toFixed(4)}</td>
-                </tr>
-                <tr>
-                    <td>Harmonicity</td>
-                    <td>{harmonicityC.toFixed(4)}</td>
-                </tr>
-                <tr>
-                    <td>Entropy</td>
-                    <td>{entropyC.toFixed(4)}</td>
-                </tr>
-                <tr>
-                    <td>Harmonic Distance</td>
-                    <td>{harmonicDistanceC.toFixed(4)}</td>
-                </tr>
-                <tr>
-                    <td>Dissonance</td>
-                    <td>{dissonanceC.toFixed(4)}</td>
-                </tr>
-                <tr>
-                    <td>Symmetric Entropy</td>
-                    <td>{symmetricEntropyC.toFixed(4)}</td>
-                </tr>
-            </table>
-
-            <table>
-                <tr>
-                    <th>Chord</th>
-                    <th>Intervals</th>
-                    <th colSpan={2}>Barlow's <br /> Harmonicity</th>
-                    <th colSpan={2}>Sethares' <br /> Dissonance</th>
-                    <th colSpan={2}>Tenney's <br /> Harmonic <br /> Distance</th>
-                    <th colSpan={2}>Erlich's <br /> Harmonic <br /> Entropy</th>
-                    <th />
-                    <th colSpan={2}>Symmetric <br /> Harmonic <br /> Distance</th>
-                    <th colSpan={2}>Symmetric <br />Harmonicity</th>
-                    <th colSpan={2}>Symmetric <br />Entropy</th>
-                    <th />
-                    <th colSpan={2}>Votes</th>
-                </tr>
-                {modelData.map((question: QuestionData, i: number) => {
-                    return <>
-                        <tr style={{ fontWeight: 'bold' }}>
-                            <td> {`[${question.space.dimensions.join(", ")}]->${question.space.equave}`} </td>
-                        </tr>
-                        {question.answers.map((answer: AnswerData, j: number) => {
-                            return <tr key={`${i}-${j}`}>
-                                <td className={styles.b}>{answer.name}</td>
-                                <td>{answer.chord.map((i: Interval) => `${i.num}/${i.denom}`).join(", ")}</td>
-                                <td>{answer.harmonicity.toFixed(4)}</td>
-                                <td className={styles.b}>{(100 * answer.harmonicity / question.EHarmonicity).toFixed(2)}%</td>
-                                <td>{answer.dissonance.toFixed(4)}</td>
-                                <td className={styles.b}>{(100 * answer.dissonance / question.EDissonance).toFixed(2)}%</td>
-                                <td>{answer.harmonicDistance.toFixed(4)}</td>
-                                <td className={styles.b}>{(100 * answer.harmonicDistance / question.EHarmonicDistance).toFixed(2)}%</td>
-                                <td>{answer.harmonicEntropy.toFixed(4)}</td>
-                                <td className={styles.b}>{(100 * answer.harmonicEntropy / question.EHarmonicEntropy).toFixed(2)}%</td>
-                                <td />
-                                <td>{answer.symmetricHarmonicDistance.toFixed(4)}</td>
-                                <td className={styles.b}>{(100 * answer.symmetricHarmonicDistance / question.ESymmetricHarmonicDistance).toFixed(2)}%</td>
-                                <td>{answer.symmetricHarmonicity.toFixed(4)}</td>
-                                <td className={styles.b}>{(100 * answer.symmetricHarmonicity / question.ESymmetricHarmonicity).toFixed(2)}%</td>
-                                <td>{answer.symmetricEntropy.toFixed(4)}</td>
-                                <td className={styles.b}>{(100 * answer.symmetricEntropy / question.ESymmetricEntropy).toFixed(2)}%</td>
-                                <td />
-                                <td>{answer.votes}</td>
-                                <td>{(100 * answer.votes / question.votes).toFixed(2)}%</td>
+            <div className={styles.Section}>
+                <table>
+                    <tr>
+                        <th>Chord</th>
+                        <th>Intervals</th>
+                        <th colSpan={2}>Barlow's <br /> Harmonicity</th>
+                        <th colSpan={2}>Sethares' <br /> Dissonance</th>
+                        <th colSpan={2}>Tenney's <br /> Harmonic <br /> Distance</th>
+                        <th colSpan={2}>Erlich's <br /> Harmonic <br /> Entropy</th>
+                        <th colSpan={2}>Stolzenburg <br /> Relative <br /> Periodicity</th>
+                        <th />
+                        <th colSpan={2}>Symmetric <br /> Harmonic <br /> Distance</th>
+                        <th colSpan={2}>Symmetric <br />Harmonicity</th>
+                        <th colSpan={2}>Symmetric <br />Entropy</th>
+                        <th />
+                        <th colSpan={2}>Votes</th>
+                    </tr>
+                    {modelData.map((question: QuestionData, i: number) => {
+                        return <>
+                            <tr style={{ fontWeight: 'bold' }}>
+                                <td> {`[${question.space.dimensions.join(", ")}]->${question.space.equave}`} </td>
                             </tr>
-                        })}
-                        <tr>
-                            <td />
-                            <td />
-                            <td colSpan={2}>Σ = {question.EHarmonicity.toFixed(4)}</td>
-                            <td colSpan={2}>Σ = {question.EDissonance.toFixed(4)}</td>
-                            <td colSpan={2}>Σ = {question.EHarmonicDistance.toFixed(4)}</td>
-                            <td colSpan={2}>Σ = {question.EHarmonicEntropy.toFixed(4)}</td>
-                            <td />
-                            <td colSpan={2}>Σ = {question.ESymmetricHarmonicDistance.toFixed(4)}</td>
-                            <td colSpan={2}>Σ = {question.ESymmetricHarmonicity.toFixed(4)}</td>
-                            <td colSpan={2}>Σ = {question.ESymmetricEntropy.toFixed(4)}</td>
-                        </tr>
-                    </>
-                })}
+                            {question.answers.map((answer: AnswerData, j: number) => {
+                                return <tr key={`${i}-${j}`}>
+                                    <td className={styles.b}>{answer.name}</td>
+                                    <td>{answer.chord.map((i: Interval) => `${i.num}/${i.denom}`).join(", ")}</td>
+                                    <td>{answer.harmonicity.toFixed(4)}</td>
+                                    <td className={styles.b}>{(100 * answer.harmonicity / question.EHarmonicity).toFixed(2)}%</td>
+                                    <td>{answer.dissonance.toFixed(4)}</td>
+                                    <td className={styles.b}>{(100 * answer.dissonance / question.EDissonance).toFixed(2)}%</td>
+                                    <td>{answer.harmonicDistance.toFixed(4)}</td>
+                                    <td className={styles.b}>{(100 * answer.harmonicDistance / question.EHarmonicDistance).toFixed(2)}%</td>
+                                    <td>{answer.harmonicEntropy.toFixed(4)}</td>
+                                    <td className={styles.b}>{(100 * answer.harmonicEntropy / question.EHarmonicEntropy).toFixed(2)}%</td>
+                                    <td>{answer.relativePeriodicity.toFixed(4)}</td>
+                                    <td className={styles.b}>{(100 * answer.relativePeriodicity / question.ERelativePeriodicity).toFixed(2)}%</td>
+                                    <td />
+                                    <td>{answer.symmetricHarmonicDistance.toFixed(4)}</td>
+                                    <td className={styles.b}>{(100 * answer.symmetricHarmonicDistance / question.ESymmetricHarmonicDistance).toFixed(2)}%</td>
+                                    <td>{answer.symmetricHarmonicity.toFixed(4)}</td>
+                                    <td className={styles.b}>{(100 * answer.symmetricHarmonicity / question.ESymmetricHarmonicity).toFixed(2)}%</td>
+                                    <td>{answer.symmetricEntropy.toFixed(4)}</td>
+                                    <td className={styles.b}>{(100 * answer.symmetricEntropy / question.ESymmetricEntropy).toFixed(2)}%</td>
+                                    <td />
+                                    <td>{answer.votes}</td>
+                                    <td>{(100 * answer.votes / question.votes).toFixed(2)}%</td>
+                                </tr>
+                            })}
+                            <tr>
+                                <td />
+                                <td />
+                                <td colSpan={2}>Σ = {question.EHarmonicity.toFixed(4)}</td>
+                                <td colSpan={2}>Σ = {question.EDissonance.toFixed(4)}</td>
+                                <td colSpan={2}>Σ = {question.EHarmonicDistance.toFixed(4)}</td>
+                                <td colSpan={2}>Σ = {question.EHarmonicEntropy.toFixed(4)}</td>
+                                <td colSpan={2}>Σ = {question.ERelativePeriodicity.toFixed(4)}</td>
+                                <td />
+                                <td colSpan={2}>Σ = {question.ESymmetricHarmonicDistance.toFixed(4)}</td>
+                                <td colSpan={2}>Σ = {question.ESymmetricHarmonicity.toFixed(4)}</td>
+                                <td colSpan={2}>Σ = {question.ESymmetricEntropy.toFixed(4)}</td>
+                            </tr>
+                        </>
+                    })}
 
-            </table>
-
+                </table>
+            </div>
             {/* <div className={styles.theoriesContainer}>
                 <Theories picked={ARR_ALL} title="All" tonality={ALL} />
                 <Theories picked={ARR_5_LIMIT} title="5-limit" tonality={ALL} />
@@ -852,8 +873,13 @@ function Results() {
                     <Tonalness />
                 </div>
             */}
-            <Ratios />
-            <Table />
+            <div className={styles.Section}>
+                <Ratios />
+            </div>
+            <div className={styles.Section}>
+                <Table />
+            </div>
+            
         </div >
     )
 }
