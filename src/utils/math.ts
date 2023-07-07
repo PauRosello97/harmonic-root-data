@@ -1,24 +1,5 @@
-import {
-    multiply, transpose, inv
-} from 'mathjs'
-
-export function trend(xs: number[], ys: number[]) {
-    let X: number[][] = xs.map(x => {
-        return [1, x];
-    });
-
-    // Transposed
-    let Xt: number[][] = X.map(function (arr) {
-        return arr.slice();
-    });
-    Xt = transpose(Xt);
-    let M = inv(multiply(X, Xt));
-    M = multiply(Xt, M);
-    M = multiply(M, ys);
-}
-
 export const findFactors = (numbers: number[]): number[] => {
-  const factors: number[] = [];
+  let factors: number[] = [];
 
   for (const number of numbers) {
     if (isPrime(number)) {
@@ -35,8 +16,10 @@ export const findFactors = (numbers: number[]): number[] => {
     }
   }
 
+  factors = factors.filter(n => isPrime(n))
   return Array.from(new Set(factors)).sort((a, b) => a - b);
 };
+
 
 const isPrime = (number: number): boolean => {
   if (number < 2) return false;

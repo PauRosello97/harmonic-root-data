@@ -163,11 +163,11 @@ export const translateChord = (chord: Chord, space: Space): Chord => {
 
 /* Tenney's Harmonic Distance */
 
-export const chordHarmonicDistance = (chord: Chord): number => {
+export const chordHarmonicDistance = (chord: Chord, space: Space): number => {
 
   const intervalHarmonicDistance = (interval: Interval): number => {
     const { num, denom } = interval
-    return Math.log2(num * denom);
+    return Math.log(num * denom) / Math.log(space.equave);
   }
 
   let harmonicDistance = 0;
@@ -381,5 +381,5 @@ export const symmetricHarmonicity = (chord: Chord, space: Space): number => {
 
 export const symmetricHarmonicDistance = (chord: Chord, space: Space): number => {
   const translatedChord: Chord = translateChord(chord, space);
-  return chordHarmonicDistance(translatedChord);
+  return chordHarmonicDistance(translatedChord, space);
 }

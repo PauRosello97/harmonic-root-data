@@ -43,6 +43,11 @@ interface AnswerData {
     symmetricHarmonicity: number
 }
 
+interface QuestionData {
+    answers: AnswerData[],
+    space: Space
+}
+
 function Results() {
     const spaces: string[] = ["[3,5]→2", "[3,7]→2", "[3,11]→2", "[5,7]→2", "[5,11]→2", "[5,7]→3", "[5,11]→3", "[7,11]→3", "[3,5,7]→2", "[3,5,7,11]→2"];
     const [data, setData] = useState<any[]>([]);
@@ -59,7 +64,7 @@ function Results() {
     const [tonalnessOctave, setTonalnessOctave] = useState<number>();
     const [tonalnessTritave, setTonalnessTritave] = useState<number>();
     const [tonalnessAverage, setTonalnessAverage] = useState<number>();
-    const [modelData, setModelData] = useState<AnswerData[][]>([]);
+    const [modelData, setModelData] = useState<QuestionData[]>([]);
 
     useEffect(()=>{
         console.log(modelData)
@@ -68,10 +73,12 @@ function Results() {
 
     useEffect(() => {
         setData(json);
-        setModelData(chordNames.map((question: string[]): AnswerData[] => {
-            return question.map((answer: string): AnswerData => {
+        setModelData(chordNames.map((question: string[]): QuestionData => {
+            let space: Space = { equave: 0, dimensions: [] }
+
+            const answers = question.map((answer: string): AnswerData => {
                 const factors: number[] = answer.split(":").map((n: string) => parseInt(n))
-                const space: Space = factorsToSpace(factors)
+                space = factorsToSpace(factors)
                 const chord = factorsToChord(factors, space.equave)
                 const superChord = chordToSuperChord(chord, false)
 
@@ -82,12 +89,19 @@ function Results() {
                     superChord,
                     harmonicity: chordHarmonicity(superChord),
                     dissonance: chordDissonance(chord),
-                    harmonicDistance: chordHarmonicDistance(chord),
+                    harmonicDistance: chordHarmonicDistance(chord, space),
                     harmonicEntropy: harmonicEntropy(chord),
                     symmetricHarmonicDistance : symmetricHarmonicDistance(chord, space),
                     symmetricHarmonicity: symmetricHarmonicity(chord, space)
                 }
             })
+            
+            const questionData: QuestionData = {
+                answers: answers,
+                space
+            }
+
+            return questionData
         }))
     }, []);
 
@@ -625,20 +639,29 @@ function Results() {
                     <th>Distance</th>
                     <th>Harmonicity</th>
                 </tr>
-                {modelData.map((question: AnswerData[], i: number) => {
-                    return  question.map((answer: AnswerData, j: number) => {
-                        return <tr key={`${i}-${j}`}>
-                            <td>{answer.name}</td>
-                            <td>{answer.chord.map((i: Interval) => `${i.num}/${i.denom}`).join(", ")}</td>
-                            <td>{answer.harmonicity.toFixed(4)}</td>
-                            <td>{answer.dissonance.toFixed(4)}</td>
-                            <td>{answer.harmonicDistance.toFixed(4)}</td>
-                            <td>{answer.harmonicEntropy.toFixed(4)}</td>
-                            <td/>
-                            <td>{answer.symmetricHarmonicDistance.toFixed(4)}</td>
-                            <td>{answer.symmetricHarmonicity.toFixed(4)}</td>
+                {modelData.map((question: QuestionData, i: number) => {
+                    return <>
+                        <tr>
+                            <td>
+                                <b>
+                                    {`[${question.space.dimensions.join(", ")}]->${question.space.equave}`}
+                                </b>
+                            </td>
                         </tr>
-                    })
+                        {question.answers.map((answer: AnswerData, j: number) => {
+                            return <tr key={`${i}-${j}`}>
+                                <td>{answer.name}</td>
+                                <td>{answer.chord.map((i: Interval) => `${i.num}/${i.denom}`).join(", ")}</td>
+                                <td>{answer.harmonicity.toFixed(4)}</td>
+                                <td>{answer.dissonance.toFixed(4)}</td>
+                                <td>{answer.harmonicDistance.toFixed(4)}</td>
+                                <td>{answer.harmonicEntropy.toFixed(4)}</td>
+                                <td/>
+                                <td>{answer.symmetricHarmonicDistance.toFixed(4)}</td>
+                                <td>{answer.symmetricHarmonicity.toFixed(4)}</td>
+                            </tr>
+                        })}
+                    </>
                 })}
 
             </table>
