@@ -383,3 +383,8 @@ export const symmetricHarmonicDistance = (chord: Chord, space: Space): number =>
   const translatedChord: Chord = translateChord(chord, space);
   return chordHarmonicDistance(translatedChord, space);
 }
+
+export const symmetricHarmonicEntropy = (chord: Chord, space: Space): number => {
+  const translatedChord: Chord = translateChord(chord, space);
+  return chordHarmonicEntropy(translatedChord);
+}
