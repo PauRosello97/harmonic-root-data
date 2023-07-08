@@ -1,3 +1,5 @@
+import { gcd } from "mathjs";
+
 export const findFactors = (numbers: number[]): number[] => {
   let factors: number[] = [];
 
@@ -19,7 +21,6 @@ export const findFactors = (numbers: number[]): number[] => {
   factors = factors.filter(n => isPrime(n))
   return Array.from(new Set(factors)).sort((a, b) => a - b);
 };
-
 
 const isPrime = (number: number): boolean => {
   if (number < 2) return false;
@@ -75,4 +76,26 @@ export const calculateCorrelation = (coordinates: {x: number, y: number}[]) => {
   const correlation = sumProduct / Math.sqrt(sumSquaredDeviationX * sumSquaredDeviationY);
 
   return correlation;
+}
+
+export function lcm(numbers: number[]) {
+  // Calculate LCM using the formula: LCM = (a * b) / GCD(a, b)
+  function calculateLCM(a: number, b: number) {
+    return (a * b) / gcd(a, b);
+  }
+
+  // Calculate LCM of array elements iteratively
+  let lcm = numbers[0];
+  for (let i = 1; i < numbers.length; i++) {
+    lcm = calculateLCM(lcm, numbers[i]);
+  }
+
+  const factors = getFactors(lcm)
+
+  let periodicity = 0
+  for (let factor of factors) {
+    if(factor === factors[0]) periodicity += factor
+  }
+
+  return periodicity;
 }

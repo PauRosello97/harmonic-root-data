@@ -13,7 +13,9 @@ import {
     symmetricHarmonicDistance,
     chordToSuperChord,
     Chord,
-    symmetricHarmonicEntropy
+    symmetricHarmonicEntropy,
+    chordRelativePeriodicity,
+    symmetricRelativePeriodicity
 } from "../../utils/models";
 import { Interval, Space } from "../../utils/models";
 import { calculateCorrelation } from "../../utils/math";
@@ -45,6 +47,7 @@ interface AnswerData {
     symmetricHarmonicity: number,
     symmetricEntropy: number,
     relativePeriodicity: number,
+    symmetricRelativePeriodicity: number,
     votes: number
 }
 
@@ -59,6 +62,7 @@ interface QuestionData {
     ESymmetricHarmonicity: number,
     ESymmetricEntropy: number,
     ERelativePeriodicity: number,
+    ESymmetricRelativePeriodicity: number,
     votes: number
 }
 
@@ -88,6 +92,7 @@ function Results() {
     const [symmetricHarmonicityC, setSymmetricHarmonicityC] = useState<number>(0);
     const [symmetricEntropyC, setSymmetricEntropyC] = useState<number>(0);
     const [relativePeriodicityC, setRelativePeriodicityC] = useState<number>(0);
+    const [symmetricRelativePeriodicityC, setSymmetricRelativePeriodicityC] = useState<number>(0)
 
     useEffect(() => {
         setVotesData(json);
@@ -114,6 +119,7 @@ function Results() {
             let ESymmetricHarmonicity = 0
             let ESymmetricEntropy = 0
             let ERelativePeriodicity = 0
+            let ESymmetricRelativePeriodicity = 0
 
             const answers = question.map((answer: string, j: number): AnswerData => {
 
@@ -129,7 +135,8 @@ function Results() {
                 const symmetricHD = symmetricHarmonicDistance(chord, space)
                 const symmetricHarm = symmetricHarmonicity(chord, space)
                 const symmetricEntropy = symmetricHarmonicEntropy(chord, space)
-                const relativePeriodicity = factors[0]
+                const relativePeriodicity = chordRelativePeriodicity(chord)
+                const symmRelativePeriodicity = symmetricRelativePeriodicity(chord, space)
 
                 EHarmonicity += harmonicity
                 EDissonance += dissonance
@@ -139,6 +146,7 @@ function Results() {
                 ESymmetricHarmonicity += symmetricHarm
                 ESymmetricEntropy += symmetricEntropy
                 ERelativePeriodicity += relativePeriodicity
+                ESymmetricRelativePeriodicity += symmRelativePeriodicity
 
                 return {
                     name: answer,
@@ -153,6 +161,7 @@ function Results() {
                     symmetricHarmonicity: symmetricHarm,
                     symmetricEntropy: symmetricEntropy,
                     relativePeriodicity,
+                    symmetricRelativePeriodicity: symmRelativePeriodicity,
                     votes: votes[j]
                 }
             })
@@ -168,6 +177,7 @@ function Results() {
                 ESymmetricHarmonicity,
                 ESymmetricEntropy,
                 ERelativePeriodicity,
+                ESymmetricRelativePeriodicity,
                 votes: totalVotes
             }
 
@@ -185,6 +195,7 @@ function Results() {
         const symmetricDistances: Coordinate[] = []
         const symmetricEntropies: Coordinate[] = []
         const relativePeriodicities: Coordinate[] = []
+        const symmetricRelativePeriodicities: Coordinate[] = []
 
         modelData.forEach(question => {
             question.answers.forEach(answer => {
@@ -197,6 +208,7 @@ function Results() {
                 symmetricDistances.push({ x: answer.symmetricHarmonicDistance / question.ESymmetricHarmonicDistance, y })
                 symmetricEntropies.push({ x: answer.symmetricEntropy / question.ESymmetricEntropy, y })
                 relativePeriodicities.push({ x: answer.relativePeriodicity / question.ERelativePeriodicity, y })
+                symmetricRelativePeriodicities.push({ x: answer.symmetricRelativePeriodicity / question.ESymmetricRelativePeriodicity, y })
             })
         })
 
@@ -208,6 +220,7 @@ function Results() {
         setSymmetricDistanceC(calculateCorrelation(symmetricDistances))
         setSymmetricEntropyC(calculateCorrelation(symmetricEntropies))
         setRelativePeriodicityC(calculateCorrelation(relativePeriodicities))
+        setSymmetricRelativePeriodicityC(calculateCorrelation(symmetricRelativePeriodicities))
 
     }, [modelData])
 
@@ -753,6 +766,10 @@ function Results() {
                         <td>{symmetricDistanceC.toFixed(4)}</td>
                     </tr>
                     <tr>
+                        <td>Relative Periodicity</td>
+                        <td>{relativePeriodicityC.toFixed(4)}</td>
+                    </tr>
+                    <tr>
                         <td>Harmonicity</td>
                         <td>{harmonicityC.toFixed(4)}</td>
                     </tr>
@@ -765,12 +782,12 @@ function Results() {
                         <td>{harmonicDistanceC.toFixed(4)}</td>
                     </tr>
                     <tr>
-                        <td>Dissonance</td>
-                        <td>{dissonanceC.toFixed(4)}</td>
+                        <td>Symmetric Relative Periodicity</td>
+                        <td>{symmetricRelativePeriodicityC.toFixed(4)}</td>
                     </tr>
                     <tr>
-                        <td>Relative Periodicity</td>
-                        <td>{relativePeriodicityC.toFixed(4)}</td>
+                        <td>Dissonance</td>
+                        <td>{dissonanceC.toFixed(4)}</td>
                     </tr>
                     <tr>
                         <td>Symmetric Entropy</td>
@@ -813,7 +830,7 @@ function Results() {
                                     <td className={styles.b}>{(100 * answer.harmonicDistance / question.EHarmonicDistance).toFixed(2)}%</td>
                                     <td>{answer.harmonicEntropy.toFixed(4)}</td>
                                     <td className={styles.b}>{(100 * answer.harmonicEntropy / question.EHarmonicEntropy).toFixed(2)}%</td>
-                                    <td>{answer.relativePeriodicity.toFixed(4)}</td>
+                                    <td>{answer.relativePeriodicity.toFixed(0)}</td>
                                     <td className={styles.b}>{(100 * answer.relativePeriodicity / question.ERelativePeriodicity).toFixed(2)}%</td>
                                     <td />
                                     <td>{answer.symmetricHarmonicDistance.toFixed(4)}</td>

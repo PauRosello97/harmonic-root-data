@@ -1,5 +1,5 @@
 import { gcd } from "mathjs";
-import { findFactors, getFactors } from "./math";
+import { findFactors, getFactors, lcm} from "./math";
 
 const primes = [2, 3, 5, 7, 11, 13, 17];
 
@@ -371,6 +371,15 @@ export const chordHarmonicEntropy = (chord: Chord): number => {
 
 }
 
+/* Stolzenburg's Relative Periodicity */
+/* https://arxiv.org/pdf/1306.6458.pdf */
+
+export const chordRelativePeriodicity = (chord: Chord): number => {
+
+  const LCM = lcm(chord.map(interval => interval.denom))
+  return LCM
+}
+
 /* Pau */
 
 export const symmetricHarmonicity = (chord: Chord, space: Space): number => {
@@ -387,4 +396,9 @@ export const symmetricHarmonicDistance = (chord: Chord, space: Space): number =>
 export const symmetricHarmonicEntropy = (chord: Chord, space: Space): number => {
   const translatedChord: Chord = translateChord(chord, space);
   return chordHarmonicEntropy(translatedChord);
+}
+
+export const symmetricRelativePeriodicity = (chord: Chord, space: Space): number => {
+  const translatedChord: Chord = translateChord(chord, space);
+  return chordRelativePeriodicity(translatedChord);
 }
