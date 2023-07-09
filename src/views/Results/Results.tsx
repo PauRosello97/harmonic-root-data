@@ -15,10 +15,10 @@ import {
     Chord,
     symmetricHarmonicEntropy,
     chordRelativePeriodicity,
-    symmetricRelativePeriodicity
+    symmetricRelativePeriodicity,
 } from "../../utils/models";
 import { Interval, Space } from "../../utils/models";
-import { calculateCorrelation } from "../../utils/math";
+import { calculateCorrelation, getRandomNumber } from "../../utils/math";
 
 /*
 Comprovar si hi ha alguna relació entre el temperament d'un espai i la confiança.
@@ -48,6 +48,7 @@ interface AnswerData {
     symmetricEntropy: number,
     relativePeriodicity: number,
     symmetricRelativePeriodicity: number,
+    random: number,
     votes: number
 }
 
@@ -63,6 +64,7 @@ interface QuestionData {
     ESymmetricEntropy: number,
     ERelativePeriodicity: number,
     ESymmetricRelativePeriodicity: number,
+    ERandom: number,
     votes: number
 }
 
@@ -93,11 +95,7 @@ function Results() {
     const [symmetricEntropyC, setSymmetricEntropyC] = useState<number>(0);
     const [relativePeriodicityC, setRelativePeriodicityC] = useState<number>(0);
     const [symmetricRelativePeriodicityC, setSymmetricRelativePeriodicityC] = useState<number>(0)
-
-    const fs: number[] = "15:21:25".split(":").map((n: string) => parseInt(n))
-    const sp: Space = factorsToSpace(fs)
-    const cr: Chord = factorsToChord(fs, sp.equave)
-    console.log(cr)
+    const [randomC, setRandomC] = useState<number>(0)
 
     useEffect(() => {
         setVotesData(json);
@@ -125,6 +123,7 @@ function Results() {
             let ESymmetricEntropy = 0
             let ERelativePeriodicity = 0
             let ESymmetricRelativePeriodicity = 0
+            let ERandom = 0;
 
             const answers = question.map((answer: string, j: number): AnswerData => {
 
@@ -142,6 +141,7 @@ function Results() {
                 const symmetricEntropy = symmetricHarmonicEntropy(chord, space)
                 const relativePeriodicity = chordRelativePeriodicity(chord)
                 const symmRelativePeriodicity = symmetricRelativePeriodicity(chord, space)
+                const random = getRandomNumber(answer)
 
                 EHarmonicity += harmonicity
                 EDissonance += dissonance
@@ -152,6 +152,7 @@ function Results() {
                 ESymmetricEntropy += symmetricEntropy
                 ERelativePeriodicity += relativePeriodicity
                 ESymmetricRelativePeriodicity += symmRelativePeriodicity
+                ERandom += random
 
                 return {
                     name: answer,
@@ -167,6 +168,7 @@ function Results() {
                     symmetricEntropy: symmetricEntropy,
                     relativePeriodicity,
                     symmetricRelativePeriodicity: symmRelativePeriodicity,
+                    random,
                     votes: votes[j]
                 }
             })
@@ -183,6 +185,7 @@ function Results() {
                 ESymmetricEntropy,
                 ERelativePeriodicity,
                 ESymmetricRelativePeriodicity,
+                ERandom,
                 votes: totalVotes
             }
 
@@ -201,6 +204,7 @@ function Results() {
         const symmetricEntropies: Coordinate[] = []
         const relativePeriodicities: Coordinate[] = []
         const symmetricRelativePeriodicities: Coordinate[] = []
+        const randomValues: Coordinate[] = []
 
         modelData.forEach(question => {
             question.answers.forEach(answer => {
@@ -214,6 +218,8 @@ function Results() {
                 symmetricEntropies.push({ x: answer.symmetricEntropy / question.ESymmetricEntropy, y })
                 relativePeriodicities.push({ x: answer.relativePeriodicity / question.ERelativePeriodicity, y })
                 symmetricRelativePeriodicities.push({ x: answer.symmetricRelativePeriodicity / question.ESymmetricRelativePeriodicity, y })
+                randomValues.push({ x: answer.random / question.ERandom, y })
+
             })
         })
 
@@ -226,9 +232,9 @@ function Results() {
         setSymmetricEntropyC(calculateCorrelation(symmetricEntropies))
         setRelativePeriodicityC(calculateCorrelation(relativePeriodicities))
         setSymmetricRelativePeriodicityC(calculateCorrelation(symmetricRelativePeriodicities))
+        setRandomC(calculateCorrelation(randomValues))
 
     }, [modelData])
-
 
     useEffect(() => {
         setTotalResponses(votesData.length);
@@ -777,6 +783,10 @@ function Results() {
                     <tr>
                         <td>Harmonicity</td>
                         <td>{harmonicityC.toFixed(4)}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Random</b></td>
+                        <td><b>{randomC.toFixed(4)}</b></td>
                     </tr>
                     <tr>
                         <td>Entropy</td>

@@ -92,3 +92,13 @@ export function lcm(numbers: number[]) {
 
   return lcm
 }
+
+export function getRandomNumber(seed: string) {
+  let sum = 0;
+  for (let i = 0; i < seed.length; i++) {
+    sum += seed.charCodeAt(i);
+  }
+  const randomSeed = sum / seed.length;
+  const randomNumber = Math.sin(randomSeed);
+  return randomNumber - Math.floor(randomNumber);
+}
