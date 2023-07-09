@@ -48,7 +48,6 @@ export const factorsToChord = (factors: number[], equave: number): Chord => {
       num = denom;
       denom = n;
     }
-    
     chord.push({ num, denom })
   }
   return chord;
@@ -375,9 +374,42 @@ export const chordHarmonicEntropy = (chord: Chord): number => {
 /* https://arxiv.org/pdf/1306.6458.pdf */
 
 export const chordRelativePeriodicity = (chord: Chord): number => {
-
   const LCM = lcm(chord.map(interval => interval.denom))
   return LCM
+}
+
+export const chordLogarithmicPeriodicity = (chord: Chord) => {
+
+  const invertChord = (chord: Chord, inversion: number): Chord => {
+    const invertedChord: Chord = []
+
+    const simplifyInterval = (interval: Interval): Interval => {
+      const GCD = gcd(interval.num, interval.denom)
+      interval.num /= GCD
+      interval.denom /= GCD
+      return interval
+    }
+
+    const divideInterval = (a: Interval, b: Interval) => {
+      let num = a.num * b.denom
+      let denom = a.denom * b.num
+      let interval = { num, denom }
+      return simplifyInterval(interval)
+    }
+
+    for (let i=0; i<chord.length; i++){
+      invertedChord.push(divideInterval(chord[i], chord[inversion]))
+    }
+    
+    return invertedChord
+  }
+
+  let periodicity = Math.log2(chordRelativePeriodicity(chord))
+  for (let i=1; i<chord.length; i++) {
+    const invertedChord: Chord = invertChord(chord, i)
+    periodicity += Math.log2(chordRelativePeriodicity(invertedChord))
+  }
+  return periodicity / chord.length
 }
 
 /* Pau */

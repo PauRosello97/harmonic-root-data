@@ -16,6 +16,7 @@ import {
     symmetricHarmonicEntropy,
     chordRelativePeriodicity,
     symmetricRelativePeriodicity,
+    chordLogarithmicPeriodicity
 } from "../../utils/models";
 import { Interval, Space } from "../../utils/models";
 import { calculateCorrelation, getRandomNumber } from "../../utils/math";
@@ -48,6 +49,7 @@ interface AnswerData {
     symmetricEntropy: number,
     relativePeriodicity: number,
     symmetricRelativePeriodicity: number,
+    logarithmicPeriodicity: number,
     random: number,
     votes: number
 }
@@ -64,6 +66,7 @@ interface QuestionData {
     ESymmetricEntropy: number,
     ERelativePeriodicity: number,
     ESymmetricRelativePeriodicity: number,
+    ELogarithmicPeriodicity: number,
     ERandom: number,
     votes: number
 }
@@ -95,6 +98,7 @@ function Results() {
     const [symmetricEntropyC, setSymmetricEntropyC] = useState<number>(0);
     const [relativePeriodicityC, setRelativePeriodicityC] = useState<number>(0);
     const [symmetricRelativePeriodicityC, setSymmetricRelativePeriodicityC] = useState<number>(0)
+    const [logarithmicPeriodicityC, setLogarithmicPeriodicityC] = useState<number>(0)
     const [randomC, setRandomC] = useState<number>(0)
 
     useEffect(() => {
@@ -124,6 +128,7 @@ function Results() {
             let ERelativePeriodicity = 0
             let ESymmetricRelativePeriodicity = 0
             let ERandom = 0;
+            let ELogarithmicPeriodicity = 0;
 
             const answers = question.map((answer: string, j: number): AnswerData => {
 
@@ -141,6 +146,7 @@ function Results() {
                 const symmetricEntropy = symmetricHarmonicEntropy(chord, space)
                 const relativePeriodicity = chordRelativePeriodicity(chord)
                 const symmRelativePeriodicity = symmetricRelativePeriodicity(chord, space)
+                const logarithmicPeriodicity = chordLogarithmicPeriodicity(chord)
                 const random = getRandomNumber(answer)
 
                 EHarmonicity += harmonicity
@@ -152,6 +158,7 @@ function Results() {
                 ESymmetricEntropy += symmetricEntropy
                 ERelativePeriodicity += relativePeriodicity
                 ESymmetricRelativePeriodicity += symmRelativePeriodicity
+                ELogarithmicPeriodicity += logarithmicPeriodicity
                 ERandom += random
 
                 return {
@@ -168,6 +175,7 @@ function Results() {
                     symmetricEntropy: symmetricEntropy,
                     relativePeriodicity,
                     symmetricRelativePeriodicity: symmRelativePeriodicity,
+                    logarithmicPeriodicity,
                     random,
                     votes: votes[j]
                 }
@@ -185,6 +193,7 @@ function Results() {
                 ESymmetricEntropy,
                 ERelativePeriodicity,
                 ESymmetricRelativePeriodicity,
+                ELogarithmicPeriodicity,
                 ERandom,
                 votes: totalVotes
             }
@@ -204,6 +213,7 @@ function Results() {
         const symmetricEntropies: Coordinate[] = []
         const relativePeriodicities: Coordinate[] = []
         const symmetricRelativePeriodicities: Coordinate[] = []
+        const logarithmicPeriodicities: Coordinate[] = []
         const randomValues: Coordinate[] = []
 
         modelData.forEach(question => {
@@ -218,8 +228,8 @@ function Results() {
                 symmetricEntropies.push({ x: answer.symmetricEntropy / question.ESymmetricEntropy, y })
                 relativePeriodicities.push({ x: answer.relativePeriodicity / question.ERelativePeriodicity, y })
                 symmetricRelativePeriodicities.push({ x: answer.symmetricRelativePeriodicity / question.ESymmetricRelativePeriodicity, y })
+                logarithmicPeriodicities.push({ x: answer.logarithmicPeriodicity / question.ELogarithmicPeriodicity, y })
                 randomValues.push({ x: answer.random / question.ERandom, y })
-
             })
         })
 
@@ -232,6 +242,7 @@ function Results() {
         setSymmetricEntropyC(calculateCorrelation(symmetricEntropies))
         setRelativePeriodicityC(calculateCorrelation(relativePeriodicities))
         setSymmetricRelativePeriodicityC(calculateCorrelation(symmetricRelativePeriodicities))
+        setLogarithmicPeriodicityC(calculateCorrelation(logarithmicPeriodicities))
         setRandomC(calculateCorrelation(randomValues))
 
     }, [modelData])
@@ -764,50 +775,29 @@ function Results() {
         )
     }
 
+    const CorrelationRow = (props: { tag: string, value: number} ) => {
+
+
+        return <tr>
+            <td>{props.tag}</td>
+            <td>{props.value.toFixed(4)}</td>
+        </tr>
+    }
+
     return (
         <div id={styles.Results}>
             <div className={styles.Section}>
                 <table>
-                    <tr>
-                        <td>Symmetric Harmonicity</td>
-                        <td>{symmetricHarmonicityC.toFixed(4)}</td>
-                    </tr>
-                    <tr>
-                        <td>Symmetric Harmonic Distance</td>
-                        <td>{symmetricDistanceC.toFixed(4)}</td>
-                    </tr>
-                    <tr>
-                        <td>Symmetric Relative Periodicity</td>
-                        <td>{symmetricRelativePeriodicityC.toFixed(4)}</td>
-                    </tr>
-                    <tr>
-                        <td>Harmonicity</td>
-                        <td>{harmonicityC.toFixed(4)}</td>
-                    </tr>
-                    <tr>
-                        <td><b>Random</b></td>
-                        <td><b>{randomC.toFixed(4)}</b></td>
-                    </tr>
-                    <tr>
-                        <td>Entropy</td>
-                        <td>{entropyC.toFixed(4)}</td>
-                    </tr>
-                    <tr>
-                        <td>Harmonic Distance</td>
-                        <td>{harmonicDistanceC.toFixed(4)}</td>
-                    </tr>
-                    <tr>
-                        <td>Relative Periodicity</td>
-                        <td>{relativePeriodicityC.toFixed(4)}</td>
-                    </tr>
-                    <tr>
-                        <td>Dissonance</td>
-                        <td>{dissonanceC.toFixed(4)}</td>
-                    </tr>
-                    <tr>
-                        <td>Symmetric Entropy</td>
-                        <td>{symmetricEntropyC.toFixed(4)}</td>
-                    </tr>
+                    <CorrelationRow tag="Symmetric Harmonicity" value={symmetricHarmonicityC} />
+                    <CorrelationRow tag="Symmetric Harmonic Distance" value={symmetricDistanceC} />
+                    <CorrelationRow tag="Symmetric Relative Periodicity" value={symmetricRelativePeriodicityC} />
+                    <CorrelationRow tag="Harmonicity" value={harmonicityC} />
+                    <CorrelationRow tag="Entropy" value={entropyC} />
+                    <CorrelationRow tag="Harmonic Distance" value={harmonicDistanceC} />
+                    <CorrelationRow tag="Relative Periodicity" value={relativePeriodicityC} />
+                    <CorrelationRow tag="Dissonance" value={dissonanceC} />
+                    <CorrelationRow tag="Logarithmic Periodicity" value={logarithmicPeriodicityC} />
+                    <CorrelationRow tag="Symmetric Entropy" value={symmetricEntropyC} />
                 </table>
             </div>
 
@@ -821,6 +811,7 @@ function Results() {
                         <th colSpan={2}>Tenney's <br /> Harmonic <br /> Distance</th>
                         <th colSpan={2}>Erlich's <br /> Harmonic <br /> Entropy</th>
                         <th colSpan={2}>Stolzenburg <br /> Relative <br /> Periodicity</th>
+                        <th colSpan={2}>Stolzenburg <br /> Logarithmic <br /> Periodicity</th>
                         <th />
                         <th colSpan={2}>Symmetric <br /> Harmonic <br /> Distance</th>
                         <th colSpan={2}>Symmetric <br />Harmonicity</th>
@@ -847,6 +838,8 @@ function Results() {
                                     <td className={styles.b}>{(100 * answer.harmonicEntropy / question.EHarmonicEntropy).toFixed(2)}%</td>
                                     <td>{answer.relativePeriodicity.toFixed(0)}</td>
                                     <td className={styles.b}>{(100 * answer.relativePeriodicity / question.ERelativePeriodicity).toFixed(2)}%</td>
+                                    <td>{answer.logarithmicPeriodicity.toFixed(4)}</td>
+                                    <td className={styles.b}>{(100 * answer.logarithmicPeriodicity / question.ELogarithmicPeriodicity).toFixed(2)}%</td>
                                     <td />
                                     <td>{answer.symmetricHarmonicDistance.toFixed(4)}</td>
                                     <td className={styles.b}>{(100 * answer.symmetricHarmonicDistance / question.ESymmetricHarmonicDistance).toFixed(2)}%</td>
@@ -867,6 +860,7 @@ function Results() {
                                 <td colSpan={2}>Σ = {question.EHarmonicDistance.toFixed(4)}</td>
                                 <td colSpan={2}>Σ = {question.EHarmonicEntropy.toFixed(4)}</td>
                                 <td colSpan={2}>Σ = {question.ERelativePeriodicity.toFixed(4)}</td>
+                                <td colSpan={2}>Σ = {question.ELogarithmicPeriodicity.toFixed(4)}</td>
                                 <td />
                                 <td colSpan={2}>Σ = {question.ESymmetricHarmonicDistance.toFixed(4)}</td>
                                 <td colSpan={2}>Σ = {question.ESymmetricHarmonicity.toFixed(4)}</td>
