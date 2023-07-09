@@ -94,6 +94,11 @@ function Results() {
     const [relativePeriodicityC, setRelativePeriodicityC] = useState<number>(0);
     const [symmetricRelativePeriodicityC, setSymmetricRelativePeriodicityC] = useState<number>(0)
 
+    const fs: number[] = "15:21:25".split(":").map((n: string) => parseInt(n))
+    const sp: Space = factorsToSpace(fs)
+    const cr: Chord = factorsToChord(fs, sp.equave)
+    console.log(cr)
+
     useEffect(() => {
         setVotesData(json);
 
@@ -766,8 +771,8 @@ function Results() {
                         <td>{symmetricDistanceC.toFixed(4)}</td>
                     </tr>
                     <tr>
-                        <td>Relative Periodicity</td>
-                        <td>{relativePeriodicityC.toFixed(4)}</td>
+                        <td>Symmetric Relative Periodicity</td>
+                        <td>{symmetricRelativePeriodicityC.toFixed(4)}</td>
                     </tr>
                     <tr>
                         <td>Harmonicity</td>
@@ -782,8 +787,8 @@ function Results() {
                         <td>{harmonicDistanceC.toFixed(4)}</td>
                     </tr>
                     <tr>
-                        <td>Symmetric Relative Periodicity</td>
-                        <td>{symmetricRelativePeriodicityC.toFixed(4)}</td>
+                        <td>Relative Periodicity</td>
+                        <td>{relativePeriodicityC.toFixed(4)}</td>
                     </tr>
                     <tr>
                         <td>Dissonance</td>

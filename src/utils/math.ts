@@ -90,12 +90,5 @@ export function lcm(numbers: number[]) {
     lcm = calculateLCM(lcm, numbers[i]);
   }
 
-  const factors = getFactors(lcm)
-
-  let periodicity = 0
-  for (let factor of factors) {
-    if(factor === factors[0]) periodicity += factor
-  }
-
-  return periodicity;
+  return lcm
 }
