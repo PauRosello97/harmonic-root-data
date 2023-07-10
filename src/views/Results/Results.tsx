@@ -856,8 +856,10 @@ function Results() {
                         <th colSpan={2}>Stolzenburg <br /> logarithmic <br /> periodicity</th>
                         <th />
                         <th colSpan={2}>Symmetric <br /> Harmonic <br /> Distance</th>
-                        <th colSpan={2}>Symmetric <br />Harmonicity</th>
-                        <th colSpan={2}>Symmetric <br />Entropy</th>
+                        <th colSpan={2}>Symmetric <br /> Harmonicity</th>
+                        <th colSpan={2}>Symmetric <br /> Entropy</th>
+                        <th colSpan={2}>Symmetric <br /> Relative <br /> Periodicity</th>
+                        <th colSpan={2}>Symmetric <br /> Logarithmic <br /> Periodicity</th>
                         <th />
                         <th colSpan={2}>Votes</th>
                     </tr>
@@ -870,8 +872,8 @@ function Results() {
 
                                 const ModelCells = (props: {value: number, total: number, decimals: number}) => {
                                     return <>
-                                        <td>{props.value.toFixed(props.decimals)}</td>
-                                        <td className={styles.b}>{(100 * props.value / props.total).toFixed(1)}%</td>
+                                        <td colSpan={2}>{props.value.toFixed(props.decimals)}</td>
+                                        {/* <td className={styles.b}>{(100 * props.value / props.total).toFixed(1)}%</td> */}
                                     </>
                                 }
 
@@ -881,7 +883,7 @@ function Results() {
                                     <ModelCells value={answer.harmonicDistance} total={question.EHarmonicDistance} decimals={4} />
                                     <ModelCells value={answer.harmonicity} total={question.EHarmonicity} decimals={4} />
                                     <ModelCells value={answer.dissonance} total={question.EDissonance} decimals={4} />
-                                    <ModelCells value={answer.harmonicEntropy} total={question.EHarmonicEntropy} decimals={0} />
+                                    <ModelCells value={answer.harmonicEntropy} total={question.EHarmonicEntropy} decimals={4} />
                                     <ModelCells value={answer.virtualPitch} total={question.EVirtualPitch} decimals={0} /> {/* Virtual pitch */}
                                     <ModelCells value={answer.dualVirtualPitch} total={question.EDualVirtualPitch} decimals={0} /> {/* Dual */}
                                     <ModelCells value={answer.droneValue} total={question.EDroneValue} decimals={0} /> {/* Carmen Parker */}
@@ -891,6 +893,8 @@ function Results() {
                                     <ModelCells value={answer.symmetricHarmonicDistance} total={question.ESymmetricHarmonicDistance} decimals={4} />
                                     <ModelCells value={answer.symmetricHarmonicity} total={question.ESymmetricHarmonicity} decimals={4} />
                                     <ModelCells value={answer.symmetricEntropy} total={question.ESymmetricEntropy} decimals={4} />
+                                    <ModelCells value={answer.symmetricRelativePeriodicity} total={question.ESymmetricRelativePeriodicity} decimals={0} />
+                                    <ModelCells value={0} total={1} decimals={4} />
                                     <td />
                                     <td>{answer.votes}</td>
                                     <td>{(100 * answer.votes / question.votes).toFixed(2)}%</td>
