@@ -433,7 +433,7 @@ export const chordLogarithmicPeriodicity = (chord: Chord) => {
   return periodicity / chord.length
 }
 
-/* Pau */
+/* Symmetric models */
 
 export const symmetricHarmonicity = (chord: Chord, space: Space): number => {
   const translatedChord: Chord = translateChord(chord, space);
@@ -454,4 +454,9 @@ export const symmetricHarmonicEntropy = (chord: Chord, space: Space): number => 
 export const symmetricRelativePeriodicity = (chord: Chord, space: Space): number => {
   const translatedChord: Chord = translateChord(chord, space);
   return chordRelativePeriodicity(translatedChord);
+}
+
+export const symmetricLogarithmicPeriodicity = (chord: Chord, space: Space): number => {
+  const translatedChord: Chord = translateChord(chord, space);
+  return chordLogarithmicPeriodicity(translatedChord);
 }

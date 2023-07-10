@@ -19,6 +19,7 @@ import {
     chordLogarithmicPeriodicity,
     virtualPitch,
     dualVirtualPitch,
+    symmetricLogarithmicPeriodicity,
     chordDroneValue
 } from "../../utils/models";
 import { Interval, Space } from "../../utils/models";
@@ -57,6 +58,7 @@ interface AnswerData {
     dualVirtualPitch: number,
     random: number,
     droneValue: number,
+    symmetricLogarithmicPeriodicity: number,
     votes: number
 }
 
@@ -77,6 +79,7 @@ interface QuestionData {
     EDualVirtualPitch: number,
     ERandom: number,
     EDroneValue: number,
+    ESymmetricLogarithmicPeriodicity: number,
     votes: number
 }
 
@@ -111,6 +114,7 @@ function Results() {
     const [virtualPitchC, setVirtualPitchC] = useState<number>(0)
     const [dualVirtualPitchC, setDualVirtualPitchC] = useState<number>(0)
     const [droneValueC, setDroneValueC] = useState<number>(0)
+    const [symmetricLogarithmicPeriodicityC, setSymmetricLogarithmicPeriodicityC] = useState<number>(0)
     const [randomC, setRandomC] = useState<number>(0)
 
     useEffect(() => {
@@ -144,6 +148,7 @@ function Results() {
             let EVirtualPitch = 0
             let EDualVirtualPitch = 0
             let EDroneValue = 0
+            let ESymmetricLogarithmicPeriodicity = 0
 
             const answers = question.map((answer: string, j: number): AnswerData => {
 
@@ -165,6 +170,7 @@ function Results() {
                 const dualVPitch = dualVirtualPitch(factors)
                 const vPitch = virtualPitch(factors)
                 const droneValue = chordDroneValue(factors, space)
+                const symmLogarithmicPeriodicity = symmetricLogarithmicPeriodicity(chord, space)
                 const random = getRandomNumber(answer)
 
                 EHarmonicity += harmonicity
@@ -181,6 +187,7 @@ function Results() {
                 EDualVirtualPitch += dualVPitch
                 ERandom += random
                 EDroneValue += droneValue
+                ESymmetricLogarithmicPeriodicity += symmLogarithmicPeriodicity
 
                 return {
                     name: answer,
@@ -199,6 +206,7 @@ function Results() {
                     logarithmicPeriodicity,
                     virtualPitch: vPitch,
                     dualVirtualPitch: dualVPitch,
+                    symmetricLogarithmicPeriodicity: symmLogarithmicPeriodicity,
                     droneValue,
                     random,
                     votes: votes[j]
@@ -222,6 +230,7 @@ function Results() {
                 EDualVirtualPitch,
                 ERandom,
                 EDroneValue,
+                ESymmetricLogarithmicPeriodicity,
                 votes: totalVotes
             }
 
@@ -245,6 +254,7 @@ function Results() {
         const randomValues: Coordinate[] = []
         const dualVirtualPitchValues: Coordinate[] = []
         const droneValues: Coordinate[] = []
+        const symmetricLogarithmicPeriodicities: Coordinate[] = []
 
         modelData.forEach(question => {
             question.answers.forEach(answer => {
@@ -263,6 +273,7 @@ function Results() {
                 dualVirtualPitchValues.push({ x: answer.dualVirtualPitch / question.EDualVirtualPitch, y })
                 droneValues.push({ x: answer.droneValue / question.EDroneValue, y })
                 randomValues.push({ x: answer.random / question.ERandom, y })
+                symmetricLogarithmicPeriodicities.push({ x: answer.symmetricLogarithmicPeriodicity / question.ESymmetricLogarithmicPeriodicity, y })
             })
         })
 
@@ -279,6 +290,7 @@ function Results() {
         setVirtualPitchC(calculateCorrelation(virtualPitchValues))
         setDualVirtualPitchC(calculateCorrelation(dualVirtualPitchValues))
         setDroneValueC(calculateCorrelation(droneValues))
+        setSymmetricLogarithmicPeriodicityC(calculateCorrelation(symmetricLogarithmicPeriodicities))
         setRandomC(calculateCorrelation(randomValues))
 
     }, [modelData])
@@ -836,6 +848,7 @@ function Results() {
                     <CorrelationRow tag="Virtual Pitch" value={virtualPitchC} />
                     <CorrelationRow tag="Logarithmic Periodicity" value={logarithmicPeriodicityC} />
                     <CorrelationRow tag="Dual Virtual Pitch" value={dualVirtualPitchC} />
+                    <CorrelationRow tag="Symmetric Logarithmic Periodicity" value={symmetricLogarithmicPeriodicityC} />
                     <CorrelationRow tag="Symmetric Entropy" value={symmetricEntropyC} />
                 </table>
             </div>
@@ -894,7 +907,7 @@ function Results() {
                                     <ModelCells value={answer.symmetricHarmonicity} total={question.ESymmetricHarmonicity} decimals={4} />
                                     <ModelCells value={answer.symmetricEntropy} total={question.ESymmetricEntropy} decimals={4} />
                                     <ModelCells value={answer.symmetricRelativePeriodicity} total={question.ESymmetricRelativePeriodicity} decimals={0} />
-                                    <ModelCells value={0} total={1} decimals={4} />
+                                    <ModelCells value={answer.symmetricLogarithmicPeriodicity} total={question.ESymmetricLogarithmicPeriodicity} decimals={4} />
                                     <td />
                                     <td>{answer.votes}</td>
                                     <td>{(100 * answer.votes / question.votes).toFixed(2)}%</td>
