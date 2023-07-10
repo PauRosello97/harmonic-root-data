@@ -404,116 +404,160 @@ function Results() {
         )
     }
 
-    const CorrelationRow = (props: { tag: string, value: number} ) => {
-        return <tr>
-            <td>{props.tag}</td>
-            <td>{props.value.toFixed(4)}</td>
-        </tr>
+    const CorrelationTable = () => {
+        const CorrelationRow = (props: { tag: string, value: number, symmetric: boolean} ) => {
+            return <tr style={{height: '20px'}}>
+                <td style={{textAlign: 'right'}}>{props.tag}</td>
+                <td style={{width: '400px'}}>
+                    <div 
+                        style={{
+                            height: '100%',
+                            width: `${Math.abs(props.value)*100}%`,
+                            backgroundColor: props.symmetric ? '#4863A0' : '#728FCE'
+                        }}
+                    >
+                        <div
+                            style={{
+                                textAlign: 'left',
+                                transform: 'translateX(100%)',
+                                paddingLeft: '5px'
+                            }}
+                        >
+                            |{props.value.toFixed(4)}|
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        }
+
+        return <div className={styles.Section}>
+            <table>
+                <CorrelationRow tag="Symmetric Harmonicity" value={symmetricHarmonicityC} symmetric={true}/>
+                <CorrelationRow tag="Symmetric Harmonic Distance" value={symmetricDistanceC} symmetric={true}/>
+                <CorrelationRow tag="Symmetric Relative Periodicity" value={symmetricRelativePeriodicityC} symmetric={true} />
+                <CorrelationRow tag="Barlow's Harmonicity" value={harmonicityC} symmetric={false} />
+                <CorrelationRow tag="Parker's Drone" value={droneValueC} symmetric={false} />
+                <CorrelationRow tag="Erlich's Entropy" value={entropyC} symmetric={false} />
+                <CorrelationRow tag="Tenney's Harmonic Distance" value={harmonicDistanceC} symmetric={false} />
+                <CorrelationRow tag="Stolzenburg's Relative Periodicity" value={relativePeriodicityC} symmetric={false} />
+                <CorrelationRow tag="Sethares' Dissonance" value={dissonanceC} symmetric={false} />
+                <CorrelationRow tag="Terhardt's Virtual Pitch" value={virtualPitchC} symmetric={false} />
+                <CorrelationRow tag="Stolzenburg's Logarithmic Periodicity" value={logarithmicPeriodicityC} symmetric={false} />
+                <CorrelationRow tag="Dual Virtual Pitch" value={dualVirtualPitchC} symmetric={false} />
+                <CorrelationRow tag="Symmetric Logarithmic Periodicity" value={symmetricLogarithmicPeriodicityC} symmetric={true} />
+                <CorrelationRow tag="Symmetric Entropy" value={symmetricEntropyC} symmetric={true} />
+            </table>
+        </div>
+    }
+
+    const ModelValuesTable = () => {
+        // Is it displaying the absolute or percentual value?
+        const [showPercentage, setShowPercentage] = useState<boolean>(false) 
+
+        return <div className={styles.Section}>
+
+            <div
+                style={{ 
+                    display: 'flex', 
+                    flexDirection: 'row', 
+                    cursor: 'pointer', 
+                    fontSize: '15px', 
+                    marginBottom: '20px',
+                    gap: '5px'
+                }}
+                onClick={() => setShowPercentage(!showPercentage)}
+            >
+                <div style={{ fontWeight: showPercentage ? 'normal' : 'bold' }}>Absolute</div>
+                <div style={{ fontWeight: !showPercentage ? 'normal' : 'bold' }}>Percentage</div>
+            </div>
+
+            <table>
+                <tr>
+                    <th>Chord</th>
+                    <th>Intervals</th>
+                    <th colSpan={2}>Tenney's <br /> harmonic <br /> distance</th>
+                    <th colSpan={2}>Barlow's <br /> harmonicity</th>
+                    <th colSpan={2}>Sethares' <br /> dissonance</th>
+                    <th colSpan={2}>Erlich's <br /> harmonic <br /> entropy</th>
+                    <th colSpan={2}>Terhardt's <br /> virtual <br /> pitch</th>
+                    <th colSpan={2}>Dual <br /> virtual <br /> pitch</th>
+                    <th colSpan={2}>Carmen <br /> Parker's <br /> drone</th>
+                    <th colSpan={2}>Stolzenburg <br /> relative <br /> periodicity</th>
+                    <th colSpan={2}>Stolzenburg <br /> logarithmic <br /> periodicity</th>
+                    <th />
+                    <th colSpan={2}>Symmetric <br /> Harmonic <br /> Distance</th>
+                    <th colSpan={2}>Symmetric <br /> Harmonicity</th>
+                    <th colSpan={2}>Symmetric <br /> Entropy</th>
+                    <th colSpan={2}>Symmetric <br /> Relative <br /> Periodicity</th>
+                    <th colSpan={2}>Symmetric <br /> Logarithmic <br /> Periodicity</th>
+                    <th />
+                    <th colSpan={2}>Votes</th>
+                </tr>
+                {modelData.map((question: QuestionData, i: number) => {
+                    return <>
+                        <tr style={{ fontWeight: 'bold' }}>
+                            <td> {`[${question.space.dimensions.join(", ")}]->${question.space.equave}`} </td>
+                        </tr>
+                        {question.answers.map((answer: AnswerData, j: number) => {
+
+                            const ModelCells = (props: {value: number, total: number, decimals: number}) => {
+                                if (showPercentage) return <td colSpan={2} className={styles.b}>{(100 * props.value / props.total).toFixed(1)}%</td>
+                                return  <td colSpan={2}>{props.value.toFixed(props.decimals)}</td>
+                            }
+
+                            return <tr key={`${i}-${j}`}>
+                                <td className={styles.b}>{answer.name}</td>
+                                <td>{answer.chord.map((i: Interval) => `${i.num}/${i.denom}`).join(", ")}</td>
+                                <ModelCells value={answer.harmonicDistance} total={question.EHarmonicDistance} decimals={4} />
+                                <ModelCells value={answer.harmonicity} total={question.EHarmonicity} decimals={4} />
+                                <ModelCells value={answer.dissonance} total={question.EDissonance} decimals={4} />
+                                <ModelCells value={answer.harmonicEntropy} total={question.EHarmonicEntropy} decimals={4} />
+                                <ModelCells value={answer.virtualPitch} total={question.EVirtualPitch} decimals={0} /> {/* Virtual pitch */}
+                                <ModelCells value={answer.dualVirtualPitch} total={question.EDualVirtualPitch} decimals={0} /> {/* Dual */}
+                                <ModelCells value={answer.droneValue} total={question.EDroneValue} decimals={0} /> {/* Carmen Parker */}
+                                <ModelCells value={answer.relativePeriodicity} total={question.ERelativePeriodicity} decimals={4} />
+                                <ModelCells value={answer.logarithmicPeriodicity} total={question.ELogarithmicPeriodicity} decimals={4} />
+                                <td />
+                                <ModelCells value={answer.symmetricHarmonicDistance} total={question.ESymmetricHarmonicDistance} decimals={4} />
+                                <ModelCells value={answer.symmetricHarmonicity} total={question.ESymmetricHarmonicity} decimals={4} />
+                                <ModelCells value={answer.symmetricEntropy} total={question.ESymmetricEntropy} decimals={4} />
+                                <ModelCells value={answer.symmetricRelativePeriodicity} total={question.ESymmetricRelativePeriodicity} decimals={0} />
+                                <ModelCells value={answer.symmetricLogarithmicPeriodicity} total={question.ESymmetricLogarithmicPeriodicity} decimals={4} />
+                                <td />
+                                <td>{answer.votes}</td>
+                                <td>{(100 * answer.votes / question.votes).toFixed(2)}%</td>
+                            </tr>
+                        })}
+                        <tr>
+                            <td />
+                            <td />
+                            <td colSpan={2}>Σ = {question.EHarmonicDistance.toFixed(4)}</td>
+                            <td colSpan={2}>Σ = {question.EHarmonicity.toFixed(4)}</td>
+                            <td colSpan={2}>Σ = {question.EDissonance.toFixed(4)}</td>
+                            <td colSpan={2}>Σ = {question.EHarmonicEntropy.toFixed(4)}</td>
+                            <td colSpan={2}>Σ = {question.EVirtualPitch.toFixed(0)}</td>
+                            <td colSpan={2}>Σ = {question.EDualVirtualPitch.toFixed(0)}</td>
+                            <td colSpan={2}>Σ = {question.EDroneValue.toFixed(0)}</td>
+                            <td colSpan={2}>Σ = {question.ERelativePeriodicity.toFixed(0)}</td>
+                            <td colSpan={2}>Σ = {question.ELogarithmicPeriodicity.toFixed(4)}</td>
+                            <td />
+                            <td colSpan={2}>Σ = {question.ESymmetricHarmonicDistance.toFixed(4)}</td>
+                            <td colSpan={2}>Σ = {question.ESymmetricHarmonicity.toFixed(4)}</td>
+                            <td colSpan={2}>Σ = {question.ESymmetricEntropy.toFixed(4)}</td>
+                        </tr>
+                    </>
+                })}
+
+            </table>
+        </div>
     }
 
     return (
         <div id={styles.Results}>
-            <div className={styles.Section}>
-                <table>
-                    <CorrelationRow tag="Symmetric Harmonicity" value={symmetricHarmonicityC} />
-                    <CorrelationRow tag="Symmetric Harmonic Distance" value={symmetricDistanceC} />
-                    <CorrelationRow tag="Symmetric Relative Periodicity" value={symmetricRelativePeriodicityC} />
-                    <CorrelationRow tag="Harmonicity" value={harmonicityC} />
-                    <CorrelationRow tag="Drone" value={droneValueC} />
-                    <CorrelationRow tag="Entropy" value={entropyC} />
-                    <CorrelationRow tag="Harmonic Distance" value={harmonicDistanceC} />
-                    <CorrelationRow tag="Relative Periodicity" value={relativePeriodicityC} />
-                    <CorrelationRow tag="Dissonance" value={dissonanceC} />
-                    <CorrelationRow tag="Virtual Pitch" value={virtualPitchC} />
-                    <CorrelationRow tag="Logarithmic Periodicity" value={logarithmicPeriodicityC} />
-                    <CorrelationRow tag="Dual Virtual Pitch" value={dualVirtualPitchC} />
-                    <CorrelationRow tag="Symmetric Logarithmic Periodicity" value={symmetricLogarithmicPeriodicityC} />
-                    <CorrelationRow tag="Symmetric Entropy" value={symmetricEntropyC} />
-                </table>
-            </div>
-
-            <div className={styles.Section}>
-                <table>
-                    <tr>
-                        <th>Chord</th>
-                        <th>Intervals</th>
-                        <th colSpan={2}>Tenney's <br /> harmonic <br /> distance</th>
-                        <th colSpan={2}>Barlow's <br /> harmonicity</th>
-                        <th colSpan={2}>Sethares' <br /> dissonance</th>
-                        <th colSpan={2}>Erlich's <br /> harmonic <br /> entropy</th>
-                        <th colSpan={2}>Terhardt's <br /> virtual <br /> pitch</th>
-                        <th colSpan={2}>Dual <br /> virtual <br /> pitch</th>
-                        <th colSpan={2}>Carmen <br /> Parker's <br /> drone</th>
-                        <th colSpan={2}>Stolzenburg <br /> relative <br /> periodicity</th>
-                        <th colSpan={2}>Stolzenburg <br /> logarithmic <br /> periodicity</th>
-                        <th />
-                        <th colSpan={2}>Symmetric <br /> Harmonic <br /> Distance</th>
-                        <th colSpan={2}>Symmetric <br /> Harmonicity</th>
-                        <th colSpan={2}>Symmetric <br /> Entropy</th>
-                        <th colSpan={2}>Symmetric <br /> Relative <br /> Periodicity</th>
-                        <th colSpan={2}>Symmetric <br /> Logarithmic <br /> Periodicity</th>
-                        <th />
-                        <th colSpan={2}>Votes</th>
-                    </tr>
-                    {modelData.map((question: QuestionData, i: number) => {
-                        return <>
-                            <tr style={{ fontWeight: 'bold' }}>
-                                <td> {`[${question.space.dimensions.join(", ")}]->${question.space.equave}`} </td>
-                            </tr>
-                            {question.answers.map((answer: AnswerData, j: number) => {
-
-                                const ModelCells = (props: {value: number, total: number, decimals: number}) => {
-                                    return <>
-                                        <td colSpan={2}>{props.value.toFixed(props.decimals)}</td>
-                                        {/* <td className={styles.b}>{(100 * props.value / props.total).toFixed(1)}%</td> */}
-                                    </>
-                                }
-
-                                return <tr key={`${i}-${j}`}>
-                                    <td className={styles.b}>{answer.name}</td>
-                                    <td>{answer.chord.map((i: Interval) => `${i.num}/${i.denom}`).join(", ")}</td>
-                                    <ModelCells value={answer.harmonicDistance} total={question.EHarmonicDistance} decimals={4} />
-                                    <ModelCells value={answer.harmonicity} total={question.EHarmonicity} decimals={4} />
-                                    <ModelCells value={answer.dissonance} total={question.EDissonance} decimals={4} />
-                                    <ModelCells value={answer.harmonicEntropy} total={question.EHarmonicEntropy} decimals={4} />
-                                    <ModelCells value={answer.virtualPitch} total={question.EVirtualPitch} decimals={0} /> {/* Virtual pitch */}
-                                    <ModelCells value={answer.dualVirtualPitch} total={question.EDualVirtualPitch} decimals={0} /> {/* Dual */}
-                                    <ModelCells value={answer.droneValue} total={question.EDroneValue} decimals={0} /> {/* Carmen Parker */}
-                                    <ModelCells value={answer.relativePeriodicity} total={question.ERelativePeriodicity} decimals={4} />
-                                    <ModelCells value={answer.logarithmicPeriodicity} total={question.ELogarithmicPeriodicity} decimals={4} />
-                                    <td />
-                                    <ModelCells value={answer.symmetricHarmonicDistance} total={question.ESymmetricHarmonicDistance} decimals={4} />
-                                    <ModelCells value={answer.symmetricHarmonicity} total={question.ESymmetricHarmonicity} decimals={4} />
-                                    <ModelCells value={answer.symmetricEntropy} total={question.ESymmetricEntropy} decimals={4} />
-                                    <ModelCells value={answer.symmetricRelativePeriodicity} total={question.ESymmetricRelativePeriodicity} decimals={0} />
-                                    <ModelCells value={answer.symmetricLogarithmicPeriodicity} total={question.ESymmetricLogarithmicPeriodicity} decimals={4} />
-                                    <td />
-                                    <td>{answer.votes}</td>
-                                    <td>{(100 * answer.votes / question.votes).toFixed(2)}%</td>
-                                </tr>
-                            })}
-                            <tr>
-                                <td />
-                                <td />
-                                <td colSpan={2}>Σ = {question.EHarmonicDistance.toFixed(4)}</td>
-                                <td colSpan={2}>Σ = {question.EHarmonicity.toFixed(4)}</td>
-                                <td colSpan={2}>Σ = {question.EDissonance.toFixed(4)}</td>
-                                <td colSpan={2}>Σ = {question.EHarmonicEntropy.toFixed(4)}</td>
-                                <td colSpan={2}>Σ = {question.EVirtualPitch.toFixed(0)}</td>
-                                <td colSpan={2}>Σ = {question.EDualVirtualPitch.toFixed(0)}</td>
-                                <td colSpan={2}>Σ = {question.EDroneValue.toFixed(0)}</td>
-                                <td colSpan={2}>Σ = {question.ERelativePeriodicity.toFixed(0)}</td>
-                                <td colSpan={2}>Σ = {question.ELogarithmicPeriodicity.toFixed(4)}</td>
-                                <td />
-                                <td colSpan={2}>Σ = {question.ESymmetricHarmonicDistance.toFixed(4)}</td>
-                                <td colSpan={2}>Σ = {question.ESymmetricHarmonicity.toFixed(4)}</td>
-                                <td colSpan={2}>Σ = {question.ESymmetricEntropy.toFixed(4)}</td>
-                            </tr>
-                        </>
-                    })}
-
-                </table>
-            </div>
+            
+            <CorrelationTable />
+            <ModelValuesTable />
+            
             <div className={styles.Section}>
                 <Ratios />
             </div>
