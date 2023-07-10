@@ -16,7 +16,10 @@ import {
     symmetricHarmonicEntropy,
     chordRelativePeriodicity,
     symmetricRelativePeriodicity,
-    chordLogarithmicPeriodicity
+    chordLogarithmicPeriodicity,
+    virtualPitch,
+    dualVirtualPitch,
+    chordDroneValue
 } from "../../utils/models";
 import { Interval, Space } from "../../utils/models";
 import { calculateCorrelation, getRandomNumber } from "../../utils/math";
@@ -50,7 +53,10 @@ interface AnswerData {
     relativePeriodicity: number,
     symmetricRelativePeriodicity: number,
     logarithmicPeriodicity: number,
+    virtualPitch: number,
+    dualVirtualPitch: number,
     random: number,
+    droneValue: number,
     votes: number
 }
 
@@ -67,7 +73,10 @@ interface QuestionData {
     ERelativePeriodicity: number,
     ESymmetricRelativePeriodicity: number,
     ELogarithmicPeriodicity: number,
+    EVirtualPitch: number,
+    EDualVirtualPitch: number,
     ERandom: number,
+    EDroneValue: number,
     votes: number
 }
 
@@ -99,6 +108,9 @@ function Results() {
     const [relativePeriodicityC, setRelativePeriodicityC] = useState<number>(0);
     const [symmetricRelativePeriodicityC, setSymmetricRelativePeriodicityC] = useState<number>(0)
     const [logarithmicPeriodicityC, setLogarithmicPeriodicityC] = useState<number>(0)
+    const [virtualPitchC, setVirtualPitchC] = useState<number>(0)
+    const [dualVirtualPitchC, setDualVirtualPitchC] = useState<number>(0)
+    const [droneValueC, setDroneValueC] = useState<number>(0)
     const [randomC, setRandomC] = useState<number>(0)
 
     useEffect(() => {
@@ -127,8 +139,11 @@ function Results() {
             let ESymmetricEntropy = 0
             let ERelativePeriodicity = 0
             let ESymmetricRelativePeriodicity = 0
-            let ERandom = 0;
-            let ELogarithmicPeriodicity = 0;
+            let ERandom = 0
+            let ELogarithmicPeriodicity = 0
+            let EVirtualPitch = 0
+            let EDualVirtualPitch = 0
+            let EDroneValue = 0
 
             const answers = question.map((answer: string, j: number): AnswerData => {
 
@@ -147,6 +162,9 @@ function Results() {
                 const relativePeriodicity = chordRelativePeriodicity(chord)
                 const symmRelativePeriodicity = symmetricRelativePeriodicity(chord, space)
                 const logarithmicPeriodicity = chordLogarithmicPeriodicity(chord)
+                const dualVPitch = dualVirtualPitch(factors)
+                const vPitch = virtualPitch(factors)
+                const droneValue = chordDroneValue(factors, space)
                 const random = getRandomNumber(answer)
 
                 EHarmonicity += harmonicity
@@ -159,7 +177,10 @@ function Results() {
                 ERelativePeriodicity += relativePeriodicity
                 ESymmetricRelativePeriodicity += symmRelativePeriodicity
                 ELogarithmicPeriodicity += logarithmicPeriodicity
+                EVirtualPitch += vPitch
+                EDualVirtualPitch += dualVPitch
                 ERandom += random
+                EDroneValue += droneValue
 
                 return {
                     name: answer,
@@ -176,6 +197,9 @@ function Results() {
                     relativePeriodicity,
                     symmetricRelativePeriodicity: symmRelativePeriodicity,
                     logarithmicPeriodicity,
+                    virtualPitch: vPitch,
+                    dualVirtualPitch: dualVPitch,
+                    droneValue,
                     random,
                     votes: votes[j]
                 }
@@ -194,7 +218,10 @@ function Results() {
                 ERelativePeriodicity,
                 ESymmetricRelativePeriodicity,
                 ELogarithmicPeriodicity,
+                EVirtualPitch,
+                EDualVirtualPitch,
                 ERandom,
+                EDroneValue,
                 votes: totalVotes
             }
 
@@ -214,7 +241,10 @@ function Results() {
         const relativePeriodicities: Coordinate[] = []
         const symmetricRelativePeriodicities: Coordinate[] = []
         const logarithmicPeriodicities: Coordinate[] = []
+        const virtualPitchValues: Coordinate[] = []
         const randomValues: Coordinate[] = []
+        const dualVirtualPitchValues: Coordinate[] = []
+        const droneValues: Coordinate[] = []
 
         modelData.forEach(question => {
             question.answers.forEach(answer => {
@@ -229,6 +259,9 @@ function Results() {
                 relativePeriodicities.push({ x: answer.relativePeriodicity / question.ERelativePeriodicity, y })
                 symmetricRelativePeriodicities.push({ x: answer.symmetricRelativePeriodicity / question.ESymmetricRelativePeriodicity, y })
                 logarithmicPeriodicities.push({ x: answer.logarithmicPeriodicity / question.ELogarithmicPeriodicity, y })
+                virtualPitchValues.push({ x: answer.virtualPitch / question.EVirtualPitch, y })
+                dualVirtualPitchValues.push({ x: answer.dualVirtualPitch / question.EDualVirtualPitch, y })
+                droneValues.push({ x: answer.droneValue / question.EDroneValue, y })
                 randomValues.push({ x: answer.random / question.ERandom, y })
             })
         })
@@ -243,6 +276,9 @@ function Results() {
         setRelativePeriodicityC(calculateCorrelation(relativePeriodicities))
         setSymmetricRelativePeriodicityC(calculateCorrelation(symmetricRelativePeriodicities))
         setLogarithmicPeriodicityC(calculateCorrelation(logarithmicPeriodicities))
+        setVirtualPitchC(calculateCorrelation(virtualPitchValues))
+        setDualVirtualPitchC(calculateCorrelation(dualVirtualPitchValues))
+        setDroneValueC(calculateCorrelation(droneValues))
         setRandomC(calculateCorrelation(randomValues))
 
     }, [modelData])
@@ -792,11 +828,14 @@ function Results() {
                     <CorrelationRow tag="Symmetric Harmonic Distance" value={symmetricDistanceC} />
                     <CorrelationRow tag="Symmetric Relative Periodicity" value={symmetricRelativePeriodicityC} />
                     <CorrelationRow tag="Harmonicity" value={harmonicityC} />
+                    <CorrelationRow tag="Drone" value={droneValueC} />
                     <CorrelationRow tag="Entropy" value={entropyC} />
                     <CorrelationRow tag="Harmonic Distance" value={harmonicDistanceC} />
                     <CorrelationRow tag="Relative Periodicity" value={relativePeriodicityC} />
                     <CorrelationRow tag="Dissonance" value={dissonanceC} />
+                    <CorrelationRow tag="Virtual Pitch" value={virtualPitchC} />
                     <CorrelationRow tag="Logarithmic Periodicity" value={logarithmicPeriodicityC} />
+                    <CorrelationRow tag="Dual Virtual Pitch" value={dualVirtualPitchC} />
                     <CorrelationRow tag="Symmetric Entropy" value={symmetricEntropyC} />
                 </table>
             </div>
@@ -806,12 +845,15 @@ function Results() {
                     <tr>
                         <th>Chord</th>
                         <th>Intervals</th>
-                        <th colSpan={2}>Barlow's <br /> Harmonicity</th>
-                        <th colSpan={2}>Sethares' <br /> Dissonance</th>
-                        <th colSpan={2}>Tenney's <br /> Harmonic <br /> Distance</th>
-                        <th colSpan={2}>Erlich's <br /> Harmonic <br /> Entropy</th>
-                        <th colSpan={2}>Stolzenburg <br /> Relative <br /> Periodicity</th>
-                        <th colSpan={2}>Stolzenburg <br /> Logarithmic <br /> Periodicity</th>
+                        <th colSpan={2}>Tenney's <br /> harmonic <br /> distance</th>
+                        <th colSpan={2}>Barlow's <br /> harmonicity</th>
+                        <th colSpan={2}>Sethares' <br /> dissonance</th>
+                        <th colSpan={2}>Erlich's <br /> harmonic <br /> entropy</th>
+                        <th colSpan={2}>Terhardt's <br /> virtual <br /> pitch</th>
+                        <th colSpan={2}>Dual <br /> virtual <br /> pitch</th>
+                        <th colSpan={2}>Carmen <br /> Parker's <br /> drone</th>
+                        <th colSpan={2}>Stolzenburg <br /> relative <br /> periodicity</th>
+                        <th colSpan={2}>Stolzenburg <br /> logarithmic <br /> periodicity</th>
                         <th />
                         <th colSpan={2}>Symmetric <br /> Harmonic <br /> Distance</th>
                         <th colSpan={2}>Symmetric <br />Harmonicity</th>
@@ -825,28 +867,30 @@ function Results() {
                                 <td> {`[${question.space.dimensions.join(", ")}]->${question.space.equave}`} </td>
                             </tr>
                             {question.answers.map((answer: AnswerData, j: number) => {
+
+                                const ModelCells = (props: {value: number, total: number, decimals: number}) => {
+                                    return <>
+                                        <td>{props.value.toFixed(props.decimals)}</td>
+                                        <td className={styles.b}>{(100 * props.value / props.total).toFixed(1)}%</td>
+                                    </>
+                                }
+
                                 return <tr key={`${i}-${j}`}>
                                     <td className={styles.b}>{answer.name}</td>
                                     <td>{answer.chord.map((i: Interval) => `${i.num}/${i.denom}`).join(", ")}</td>
-                                    <td>{answer.harmonicity.toFixed(4)}</td>
-                                    <td className={styles.b}>{(100 * answer.harmonicity / question.EHarmonicity).toFixed(2)}%</td>
-                                    <td>{answer.dissonance.toFixed(4)}</td>
-                                    <td className={styles.b}>{(100 * answer.dissonance / question.EDissonance).toFixed(2)}%</td>
-                                    <td>{answer.harmonicDistance.toFixed(4)}</td>
-                                    <td className={styles.b}>{(100 * answer.harmonicDistance / question.EHarmonicDistance).toFixed(2)}%</td>
-                                    <td>{answer.harmonicEntropy.toFixed(4)}</td>
-                                    <td className={styles.b}>{(100 * answer.harmonicEntropy / question.EHarmonicEntropy).toFixed(2)}%</td>
-                                    <td>{answer.relativePeriodicity.toFixed(0)}</td>
-                                    <td className={styles.b}>{(100 * answer.relativePeriodicity / question.ERelativePeriodicity).toFixed(2)}%</td>
-                                    <td>{answer.logarithmicPeriodicity.toFixed(4)}</td>
-                                    <td className={styles.b}>{(100 * answer.logarithmicPeriodicity / question.ELogarithmicPeriodicity).toFixed(2)}%</td>
+                                    <ModelCells value={answer.harmonicDistance} total={question.EHarmonicDistance} decimals={4} />
+                                    <ModelCells value={answer.harmonicity} total={question.EHarmonicity} decimals={4} />
+                                    <ModelCells value={answer.dissonance} total={question.EDissonance} decimals={4} />
+                                    <ModelCells value={answer.harmonicEntropy} total={question.EHarmonicEntropy} decimals={0} />
+                                    <ModelCells value={answer.virtualPitch} total={question.EVirtualPitch} decimals={0} /> {/* Virtual pitch */}
+                                    <ModelCells value={answer.dualVirtualPitch} total={question.EDualVirtualPitch} decimals={0} /> {/* Dual */}
+                                    <ModelCells value={answer.droneValue} total={question.EDroneValue} decimals={0} /> {/* Carmen Parker */}
+                                    <ModelCells value={answer.relativePeriodicity} total={question.ERelativePeriodicity} decimals={4} />
+                                    <ModelCells value={answer.logarithmicPeriodicity} total={question.ELogarithmicPeriodicity} decimals={4} />
                                     <td />
-                                    <td>{answer.symmetricHarmonicDistance.toFixed(4)}</td>
-                                    <td className={styles.b}>{(100 * answer.symmetricHarmonicDistance / question.ESymmetricHarmonicDistance).toFixed(2)}%</td>
-                                    <td>{answer.symmetricHarmonicity.toFixed(4)}</td>
-                                    <td className={styles.b}>{(100 * answer.symmetricHarmonicity / question.ESymmetricHarmonicity).toFixed(2)}%</td>
-                                    <td>{answer.symmetricEntropy.toFixed(4)}</td>
-                                    <td className={styles.b}>{(100 * answer.symmetricEntropy / question.ESymmetricEntropy).toFixed(2)}%</td>
+                                    <ModelCells value={answer.symmetricHarmonicDistance} total={question.ESymmetricHarmonicDistance} decimals={4} />
+                                    <ModelCells value={answer.symmetricHarmonicity} total={question.ESymmetricHarmonicity} decimals={4} />
+                                    <ModelCells value={answer.symmetricEntropy} total={question.ESymmetricEntropy} decimals={4} />
                                     <td />
                                     <td>{answer.votes}</td>
                                     <td>{(100 * answer.votes / question.votes).toFixed(2)}%</td>
@@ -855,11 +899,14 @@ function Results() {
                             <tr>
                                 <td />
                                 <td />
+                                <td colSpan={2}>Σ = {question.EHarmonicDistance.toFixed(4)}</td>
                                 <td colSpan={2}>Σ = {question.EHarmonicity.toFixed(4)}</td>
                                 <td colSpan={2}>Σ = {question.EDissonance.toFixed(4)}</td>
-                                <td colSpan={2}>Σ = {question.EHarmonicDistance.toFixed(4)}</td>
                                 <td colSpan={2}>Σ = {question.EHarmonicEntropy.toFixed(4)}</td>
-                                <td colSpan={2}>Σ = {question.ERelativePeriodicity.toFixed(4)}</td>
+                                <td colSpan={2}>Σ = {question.EVirtualPitch.toFixed(0)}</td>
+                                <td colSpan={2}>Σ = {question.EDualVirtualPitch.toFixed(0)}</td>
+                                <td colSpan={2}>Σ = {question.EDroneValue.toFixed(0)}</td>
+                                <td colSpan={2}>Σ = {question.ERelativePeriodicity.toFixed(0)}</td>
                                 <td colSpan={2}>Σ = {question.ELogarithmicPeriodicity.toFixed(4)}</td>
                                 <td />
                                 <td colSpan={2}>Σ = {question.ESymmetricHarmonicDistance.toFixed(4)}</td>

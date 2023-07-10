@@ -287,6 +287,27 @@ export const chordDissonance = (chord: Chord) => {
   return diss;
 }
 
+/* Terhardt's virtual pitch */
+
+export const virtualPitch = (factors: number[]) => {
+  return factors[0]
+}
+
+/* Dial virtual pitch */
+
+export const dualVirtualPitch = (factors: number[]) => {
+  if (factors[0] < factors[factors.length-1]) return factors[0]
+  return factors[factors.length-1]
+}
+
+/* Carmen Parker's Drone */
+
+export const chordDroneValue = (factors: number[], space: Space) => {
+  const primeFactors = getFactors(factors[0])
+  for (let factor of primeFactors) if(factor !== space.equave) return 0
+  return 1
+}
+
 /* Harmonic Entropy */
 
 export const chordHarmonicEntropy = (chord: Chord): number => {
