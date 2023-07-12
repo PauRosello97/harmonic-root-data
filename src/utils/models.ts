@@ -460,3 +460,8 @@ export const symmetricLogarithmicPeriodicity = (chord: Chord, space: Space): num
   const translatedChord: Chord = translateChord(chord, space);
   return chordLogarithmicPeriodicity(translatedChord);
 }
+
+export const chordSymmetricDissonance = (chord: Chord, space: Space): number => {
+  const translatedChord: Chord = translateChord(chord, space);
+  return chordDissonance(translatedChord);
+}

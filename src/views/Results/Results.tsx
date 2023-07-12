@@ -20,6 +20,7 @@ import {
     virtualPitch,
     dualVirtualPitch,
     symmetricLogarithmicPeriodicity,
+    chordSymmetricDissonance,
     chordDroneValue
 } from "../../utils/models";
 import { Interval, Space } from "../../utils/models";
@@ -50,6 +51,7 @@ interface AnswerData {
     random: number,
     droneValue: number,
     symmetricLogarithmicPeriodicity: number,
+    symmetricDissonance: number,
     votes: number
 }
 
@@ -68,6 +70,7 @@ interface QuestionData {
     ELogarithmicPeriodicity: number,
     EVirtualPitch: number,
     EDualVirtualPitch: number,
+    ESymmetricDissonance: number,
     ERandom: number,
     EDroneValue: number,
     ESymmetricLogarithmicPeriodicity: number,
@@ -96,6 +99,7 @@ function Results() {
     const [dualVirtualPitchC, setDualVirtualPitchC] = useState<number>(0)
     const [droneValueC, setDroneValueC] = useState<number>(0)
     const [symmetricLogarithmicPeriodicityC, setSymmetricLogarithmicPeriodicityC] = useState<number>(0)
+    const [symmetricDissonanceC, setSymmetricDissonanceC] = useState<number>(0)
     const [randomC, setRandomC] = useState<number>(0)
 
     useEffect(() => {
@@ -129,6 +133,7 @@ function Results() {
             let EVirtualPitch = 0
             let EDualVirtualPitch = 0
             let EDroneValue = 0
+            let ESymmetricDissonance = 0
             let ESymmetricLogarithmicPeriodicity = 0
 
             const answers = question.map((answer: string, j: number): AnswerData => {
@@ -152,6 +157,7 @@ function Results() {
                 const vPitch = virtualPitch(factors)
                 const droneValue = chordDroneValue(factors, space)
                 const symmLogarithmicPeriodicity = symmetricLogarithmicPeriodicity(chord, space)
+                const symmetricDissonance = chordSymmetricDissonance(chord, space)
                 const random = getRandomNumber(answer)
 
                 EHarmonicity += harmonicity
@@ -168,6 +174,7 @@ function Results() {
                 EDualVirtualPitch += dualVPitch
                 ERandom += random
                 EDroneValue += droneValue
+                ESymmetricDissonance += symmetricDissonance
                 ESymmetricLogarithmicPeriodicity += symmLogarithmicPeriodicity
 
                 return {
@@ -188,6 +195,7 @@ function Results() {
                     virtualPitch: vPitch,
                     dualVirtualPitch: dualVPitch,
                     symmetricLogarithmicPeriodicity: symmLogarithmicPeriodicity,
+                    symmetricDissonance,
                     droneValue,
                     random,
                     votes: votes[j]
@@ -209,6 +217,7 @@ function Results() {
                 ELogarithmicPeriodicity,
                 EVirtualPitch,
                 EDualVirtualPitch,
+                ESymmetricDissonance,
                 ERandom,
                 EDroneValue,
                 ESymmetricLogarithmicPeriodicity,
@@ -236,6 +245,7 @@ function Results() {
         const dualVirtualPitchValues: Coordinate[] = []
         const droneValues: Coordinate[] = []
         const symmetricLogarithmicPeriodicities: Coordinate[] = []
+        const symmetricDissonances: Coordinate[] = []
 
         modelData.forEach(question => {
             question.answers.forEach(answer => {
@@ -255,6 +265,7 @@ function Results() {
                 droneValues.push({ x: answer.droneValue / question.EDroneValue, y })
                 randomValues.push({ x: answer.random / question.ERandom, y })
                 symmetricLogarithmicPeriodicities.push({ x: answer.symmetricLogarithmicPeriodicity / question.ESymmetricLogarithmicPeriodicity, y })
+                symmetricDissonances.push({ x: answer.symmetricDissonance / question.ESymmetricDissonance, y })
             })
         })
 
@@ -272,6 +283,7 @@ function Results() {
         setDualVirtualPitchC(calculateCorrelation(dualVirtualPitchValues))
         setDroneValueC(calculateCorrelation(droneValues))
         setSymmetricLogarithmicPeriodicityC(calculateCorrelation(symmetricLogarithmicPeriodicities))
+        setSymmetricDissonanceC(calculateCorrelation(symmetricDissonances))
         setRandomC(calculateCorrelation(randomValues))
 
     }, [modelData])
@@ -442,9 +454,9 @@ function Results() {
                 <CorrelationRow tag="Stolzenburg's Relative Periodicity" value={relativePeriodicityC} symmetric={false} />
                 <CorrelationRow tag="Sethares' Dissonance" value={dissonanceC} symmetric={false} />
                 <CorrelationRow tag="Terhardt's Virtual Pitch" value={virtualPitchC} symmetric={false} />
-                <CorrelationRow tag="Stolzenburg's Logarithmic Periodicity" value={logarithmicPeriodicityC} symmetric={false} />
+                {/* <CorrelationRow tag="Stolzenburg's Logarithmic Periodicity" value={logarithmicPeriodicityC} symmetric={false} /> */}
                 <CorrelationRow tag="Dual Virtual Pitch" value={dualVirtualPitchC} symmetric={false} />
-                <CorrelationRow tag="Symmetric Logarithmic Periodicity" value={symmetricLogarithmicPeriodicityC} symmetric={true} />
+                {/* <CorrelationRow tag="Symmetric Logarithmic Periodicity" value={symmetricLogarithmicPeriodicityC} symmetric={true} /> */}
                 <CorrelationRow tag="Symmetric Entropy" value={symmetricEntropyC} symmetric={true} />
             </table>
         </div>
@@ -483,13 +495,14 @@ function Results() {
                     <th colSpan={2}>Dual <br /> virtual <br /> pitch</th>
                     <th colSpan={2}>Carmen <br /> Parker's <br /> drone</th>
                     <th colSpan={2}>Stolzenburg <br /> relative <br /> periodicity</th>
-                    <th colSpan={2}>Stolzenburg <br /> logarithmic <br /> periodicity</th>
+                    {/* <th colSpan={2}>Stolzenburg <br /> logarithmic <br /> periodicity</th> */}
                     <th />
                     <th colSpan={2}>Symmetric <br /> Harmonic <br /> Distance</th>
                     <th colSpan={2}>Symmetric <br /> Harmonicity</th>
+                    <th colSpan={2}>Symmetric <br /> Dissonance</th>
                     <th colSpan={2}>Symmetric <br /> Entropy</th>
                     <th colSpan={2}>Symmetric <br /> Relative <br /> Periodicity</th>
-                    <th colSpan={2}>Symmetric <br /> Logarithmic <br /> Periodicity</th>
+                    {/* <th colSpan={2}>Symmetric <br /> Logarithmic <br /> Periodicity</th> */}
                     <th />
                     <th colSpan={2}>Votes</th>
                 </tr>
@@ -516,13 +529,14 @@ function Results() {
                                 <ModelCells value={answer.dualVirtualPitch} total={question.EDualVirtualPitch} decimals={0} /> {/* Dual */}
                                 <ModelCells value={answer.droneValue} total={question.EDroneValue} decimals={0} /> {/* Carmen Parker */}
                                 <ModelCells value={answer.relativePeriodicity} total={question.ERelativePeriodicity} decimals={4} />
-                                <ModelCells value={answer.logarithmicPeriodicity} total={question.ELogarithmicPeriodicity} decimals={4} />
+                                {/* <ModelCells value={answer.logarithmicPeriodicity} total={question.ELogarithmicPeriodicity} decimals={4} /> */}
                                 <td />
                                 <ModelCells value={answer.symmetricHarmonicDistance} total={question.ESymmetricHarmonicDistance} decimals={4} />
                                 <ModelCells value={answer.symmetricHarmonicity} total={question.ESymmetricHarmonicity} decimals={4} />
+                                <ModelCells value={answer.symmetricDissonance} total={question.ESymmetricDissonance} decimals={4} />
                                 <ModelCells value={answer.symmetricEntropy} total={question.ESymmetricEntropy} decimals={4} />
                                 <ModelCells value={answer.symmetricRelativePeriodicity} total={question.ESymmetricRelativePeriodicity} decimals={0} />
-                                <ModelCells value={answer.symmetricLogarithmicPeriodicity} total={question.ESymmetricLogarithmicPeriodicity} decimals={4} />
+                                {/* <ModelCells value={answer.symmetricLogarithmicPeriodicity} total={question.ESymmetricLogarithmicPeriodicity} decimals={4} /> */}
                                 <td />
                                 <td>{answer.votes}</td>
                                 <td>{(100 * answer.votes / question.votes).toFixed(2)}%</td>
@@ -539,11 +553,13 @@ function Results() {
                             <td colSpan={2}>Σ = {question.EDualVirtualPitch.toFixed(0)}</td>
                             <td colSpan={2}>Σ = {question.EDroneValue.toFixed(0)}</td>
                             <td colSpan={2}>Σ = {question.ERelativePeriodicity.toFixed(0)}</td>
-                            <td colSpan={2}>Σ = {question.ELogarithmicPeriodicity.toFixed(4)}</td>
+                            {/* <td colSpan={2}>Σ = {question.ELogarithmicPeriodicity.toFixed(4)}</td> */}
                             <td />
                             <td colSpan={2}>Σ = {question.ESymmetricHarmonicDistance.toFixed(4)}</td>
                             <td colSpan={2}>Σ = {question.ESymmetricHarmonicity.toFixed(4)}</td>
+                            <td colSpan={2}>Σ = {question.ESymmetricDissonance.toFixed(4)}</td>
                             <td colSpan={2}>Σ = {question.ESymmetricEntropy.toFixed(4)}</td>
+                            <td colSpan={2}>Σ = {question.ESymmetricRelativePeriodicity.toFixed(4)}</td>
                         </tr>
                     </>
                 })}
@@ -552,9 +568,84 @@ function Results() {
         </div>
     }
 
+    const GraphicCorrelationTable = () => {
+        const w = 600
+        const h = 600
+
+        const spaceTop = -150
+        const spaceBottom = 0
+
+        const ratioToY = (ratio: number) => (h-spaceBottom)*(1-ratio) + spaceTop
+
+        const Model = (props: { a: number, b?: number, tagA: string, tagB?: string }) => {
+            const {a, b, tagA, tagB} = props
+
+            const x1 = w*0.35
+            const x2 = w*0.65
+            const y1 = ratioToY(Math.abs(a))
+            const y2 = ratioToY(Math.abs(b ?? 0))
+
+            return <>
+                {b && <line
+                    x1={x1}
+                    y1={y1}
+                    x2={x2}
+                    y2={y2}
+                    stroke='grey'
+                />}
+                <circle
+                    r={5}
+                    fill='black'
+                    cx={x1}
+                    cy={y1}
+                />
+                {b && <circle
+                    r={5}
+                    fill='black'
+                    cx={x2}
+                    cy={y2}
+                />}
+                <text x={x1 - 10} y={y1 + 3} textAnchor="end">{tagA}</text>
+                <text x={x1 + 10} y={y1 + 3} textAnchor="start">|{a.toFixed(4)}|</text>
+                {tagB && <text x={x2 + 10} y={y2 + 3} textAnchor="start">{tagB}</text>}
+                {b && <text x={x2 - 10} y={y2 + 3} textAnchor="end">|{b.toFixed(4)}|</text>}
+            </>
+        }
+
+        return <svg style={{position: 'relative', border: '1px solid black', width: `${w}px`, height: `${h}px` }}>
+
+            <line x1={25} x2={w} y1={ratioToY(0.8)} y2={ratioToY(0.8)} stroke='grey' />
+            <line x1={25} x2={w} y1={ratioToY(0.6)} y2={ratioToY(0.6)} stroke='grey' />
+            <line x1={25} x2={w} y1={ratioToY(0.4)} y2={ratioToY(0.4)} stroke='grey' />
+            <line x1={25} x2={w} y1={ratioToY(0.2)} y2={ratioToY(0.2)} stroke='grey' />
+            <line x1={25} x2={w} y1={ratioToY(0.0)} y2={ratioToY(0.0)} stroke='grey' />
+
+            <text x={5} y={ratioToY(0.8)+3}> 0.8 </text>
+            <text x={5} y={ratioToY(0.6)+3}> 0.6 </text>
+            <text x={5} y={ratioToY(0.4)+3}> 0.4 </text>
+            <text x={5} y={ratioToY(0.2)+3}> 0.2 </text>
+            <text x={5} y={ratioToY(0.0)+3}> 0.0 </text>
+
+            <text x={w*0.35} y={ratioToY(0.0)+20} textAnchor="middle" style={{ fontWeight: 'bold' }}>Original Models</text>
+            <text x={w*0.65} y={ratioToY(0.0)+20} textAnchor="middle" style={{ fontWeight: 'bold' }}>Symmetric Models</text>
+
+            <line x1={w*0.35} x2={w*0.35} y1={ratioToY(0)} y2={0} stroke='grey' strokeDasharray='5px 2px' />
+            <line x1={w*0.65} x2={w*0.65} y1={ratioToY(0)} y2={0} stroke='grey' strokeDasharray='5px 2px' />
+
+            <Model a={harmonicityC} b={symmetricHarmonicityC} tagA="Harmonicity" tagB="Symmetric Harmonicity"/>
+            <Model a={harmonicDistanceC} b={symmetricDistanceC} tagA="Harmonic Distance" tagB="Symmetric Harmonic Distance"/>
+            <Model a={relativePeriodicityC} b={symmetricRelativePeriodicityC} tagA="Relative Periodicity" tagB="Symmetric Relative Periodicity"/>
+            <Model a={entropyC} b={symmetricEntropyC} tagA="Harmonic Entropy" tagB="Symmetric Harmonic Entropy"/>
+            <Model a={dissonanceC} b={symmetricDissonanceC} tagA="Dissonance" tagB="Symmetric Dissonance"/>
+            <Model a={droneValueC}  tagA="Drone" />
+
+            
+        </svg>
+    }
+
     return (
         <div id={styles.Results}>
-            
+            <GraphicCorrelationTable />
             <CorrelationTable />
             <ModelValuesTable />
             
