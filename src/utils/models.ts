@@ -423,30 +423,25 @@ export const chordLogarithmicPeriodicity = (chord: Chord) => {
 
 /* Symmetric models */
 
-export const symmetricHarmonicity = (chord: Chord, space: Space): number => {
+export const chordSymmetricHarmonicity = (chord: Chord, space: Space): number => {
   const translatedChord: Chord = translateChord(chord, space);
   const translatedSuperChord = chordToSuperChord(translatedChord, true)
   return chordHarmonicity(translatedSuperChord);
 }
 
-export const symmetricHarmonicDistance = (chord: Chord, space: Space): number => {
+export const chordSymmetricHarmonicDistance = (chord: Chord, space: Space): number => {
   const translatedChord: Chord = translateChord(chord, space);
   return chordHarmonicDistance(translatedChord, space);
 }
 
-export const symmetricHarmonicEntropy = (chord: Chord, space: Space): number => {
+export const chordSymmetricHarmonicEntropy = (chord: Chord, space: Space): number => {
   const translatedChord: Chord = translateChord(chord, space);
   return chordHarmonicEntropy(translatedChord);
 }
 
-export const symmetricRelativePeriodicity = (chord: Chord, space: Space): number => {
+export const chordSymmetricRelativePeriodicity = (chord: Chord, space: Space): number => {
   const translatedChord: Chord = translateChord(chord, space);
   return chordRelativePeriodicity(translatedChord);
-}
-
-export const symmetricLogarithmicPeriodicity = (chord: Chord, space: Space): number => {
-  const translatedChord: Chord = translateChord(chord, space);
-  return chordLogarithmicPeriodicity(translatedChord);
 }
 
 export const chordSymmetricDissonance = (chord: Chord, space: Space): number => {

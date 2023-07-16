@@ -3,19 +3,19 @@ import styles from "./Results.module.css";
 import { chordNames } from "../../data/chords";
 import json from '../../data/data.json';
 import {
+    Chord,
     chordHarmonicDistance,
     chordHarmonicity,
     factorsToSpace,
     factorsToChord,
     chordDissonance,
     chordHarmonicEntropy,
-    symmetricHarmonicity,
-    symmetricHarmonicDistance,
+    chordSymmetricHarmonicity,
+    chordSymmetricHarmonicDistance,
     chordToSuperChord,
-    Chord,
-    symmetricHarmonicEntropy,
+    chordSymmetricHarmonicEntropy,
     chordRelativePeriodicity,
-    symmetricRelativePeriodicity,
+    chordSymmetricRelativePeriodicity,
     chordSymmetricDissonance,
     chordDroneValue
 } from "../../utils/models";
@@ -123,11 +123,11 @@ function Results() {
                 const dissonance = chordDissonance(chord)
                 const harmonicDistance = chordHarmonicDistance(chord, space)
                 const harmonicEntropy = chordHarmonicEntropy(chord)
-                const symmetricHD = symmetricHarmonicDistance(chord, space)
-                const symmetricHarm = symmetricHarmonicity(chord, space)
-                const symmetricEntropy = symmetricHarmonicEntropy(chord, space)
+                const symmetricHarmonicDistance = chordSymmetricHarmonicDistance(chord, space)
+                const symmetricHarmonicity = chordSymmetricHarmonicity(chord, space)
+                const symmetricEntropy = chordSymmetricHarmonicEntropy(chord, space)
                 const relativePeriodicity = chordRelativePeriodicity(chord)
-                const symmRelativePeriodicity = symmetricRelativePeriodicity(chord, space)
+                const symmetricRelativePeriodicity = chordSymmetricRelativePeriodicity(chord, space)
                 const droneValue = chordDroneValue(i%2===0, chord, space)
                 const symmetricDissonance = chordSymmetricDissonance(chord, space)
 
@@ -135,11 +135,11 @@ function Results() {
                 EDissonance += dissonance
                 EHarmonicDistance += harmonicDistance
                 EHarmonicEntropy += harmonicEntropy
-                ESymmetricHarmonicDistance += symmetricHD
-                ESymmetricHarmonicity += symmetricHarm
+                ESymmetricHarmonicDistance += symmetricHarmonicDistance
+                ESymmetricHarmonicity += symmetricHarmonicity
                 ESymmetricEntropy += symmetricEntropy
                 ERelativePeriodicity += relativePeriodicity
-                ESymmetricRelativePeriodicity += symmRelativePeriodicity
+                ESymmetricRelativePeriodicity += symmetricRelativePeriodicity
                 EDroneValue += droneValue
                 ESymmetricDissonance += symmetricDissonance
 
@@ -152,11 +152,11 @@ function Results() {
                     dissonance,
                     harmonicDistance,
                     harmonicEntropy,
-                    symmetricHarmonicDistance: symmetricHD,
-                    symmetricHarmonicity: symmetricHarm,
-                    symmetricEntropy: symmetricEntropy,
+                    symmetricHarmonicDistance,
+                    symmetricHarmonicity,
+                    symmetricEntropy,
                     relativePeriodicity,
-                    symmetricRelativePeriodicity: symmRelativePeriodicity,
+                    symmetricRelativePeriodicity: symmetricRelativePeriodicity,
                     symmetricDissonance,
                     droneValue,
                     votes: votes[j]
