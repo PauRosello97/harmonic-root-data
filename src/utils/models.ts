@@ -289,8 +289,9 @@ export const chordDissonance = (chord: Chord) => {
 
 /* Carmen Parker's Drone */
 
-export const chordDroneValue = (factors: number[], space: Space) => {
-  const primeFactors = getFactors(factors[0])
+export const chordDroneValue = (otonal: boolean, chord: Chord, space: Space) => {
+  const LCM = lcm(chord.map(interval => otonal ? interval.denom : interval.num))
+  const primeFactors = getFactors(LCM)
   for (let factor of primeFactors) if(factor !== space.equave) return 0
   return 1
 }

@@ -128,7 +128,7 @@ function Results() {
                 const symmetricEntropy = symmetricHarmonicEntropy(chord, space)
                 const relativePeriodicity = chordRelativePeriodicity(chord)
                 const symmRelativePeriodicity = symmetricRelativePeriodicity(chord, space)
-                const droneValue = chordDroneValue(factors, space)
+                const droneValue = chordDroneValue(i%2===0, chord, space)
                 const symmetricDissonance = chordSymmetricDissonance(chord, space)
 
                 EHarmonicity += harmonicity
@@ -383,12 +383,12 @@ function Results() {
                 <tr>
                     <th>Chord</th>
                     <th>Intervals</th>
-                    <th colSpan={2}>Tenney's <br /> harmonic <br /> distance</th>
-                    <th colSpan={2}>Barlow's <br /> harmonicity</th>
-                    <th colSpan={2}>Sethares' <br /> dissonance</th>
-                    <th colSpan={2}>Erlich's <br /> harmonic <br /> entropy</th>
-                    <th colSpan={2}>Carmen <br /> Parker's <br /> drone</th>
-                    <th colSpan={2}>Stolzenburg <br /> relative <br /> periodicity</th>
+                    <th colSpan={2}>Harmonic <br /> Distance</th>
+                    <th colSpan={2}>Harmonicity</th>
+                    <th colSpan={2}>Dissonance</th>
+                    <th colSpan={2}>Harmonic <br /> entropy</th>
+                    <th colSpan={2}>Drone</th>
+                    <th colSpan={2}>Relative <br /> Periodicity</th>
                     <th />
                     <th colSpan={2}>Symmetric <br /> Harmonic <br /> Distance</th>
                     <th colSpan={2}>Symmetric <br /> Harmonicity</th>
