@@ -638,8 +638,8 @@ function Results() {
             <Model a={entropyC} b={symmetricEntropyC} tagA="Harmonic Entropy" tagB="Symmetric Harmonic Entropy"/>
             <Model a={dissonanceC} b={symmetricDissonanceC} tagA="Dissonance" tagB="Symmetric Dissonance"/>
             <Model a={droneValueC}  tagA="Drone" />
-
-            
+            <Model a={virtualPitchC}  tagA="Virtual Pitch" />
+            <Model a={dualVirtualPitchC}  tagA="Dual Virtual Pitch" />
         </svg>
     }
 
