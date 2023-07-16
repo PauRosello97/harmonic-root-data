@@ -287,19 +287,6 @@ export const chordDissonance = (chord: Chord) => {
   return diss;
 }
 
-/* Terhardt's virtual pitch */
-
-export const virtualPitch = (factors: number[]) => {
-  return factors[0]
-}
-
-/* Dial virtual pitch */
-
-export const dualVirtualPitch = (factors: number[]) => {
-  if (factors[0] < factors[factors.length-1]) return factors[0]
-  return factors[factors.length-1]
-}
-
 /* Carmen Parker's Drone */
 
 export const chordDroneValue = (factors: number[], space: Space) => {

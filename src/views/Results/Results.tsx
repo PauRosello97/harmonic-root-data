@@ -16,8 +16,6 @@ import {
     symmetricHarmonicEntropy,
     chordRelativePeriodicity,
     symmetricRelativePeriodicity,
-    virtualPitch,
-    dualVirtualPitch,
     chordSymmetricDissonance,
     chordDroneValue
 } from "../../utils/models";
@@ -43,8 +41,6 @@ interface AnswerData {
     symmetricEntropy: number,
     relativePeriodicity: number,
     symmetricRelativePeriodicity: number,
-    virtualPitch: number,
-    dualVirtualPitch: number,
     droneValue: number,
     symmetricDissonance: number,
     votes: number
@@ -62,8 +58,6 @@ interface QuestionData {
     ESymmetricEntropy: number,
     ERelativePeriodicity: number,
     ESymmetricRelativePeriodicity: number,
-    EVirtualPitch: number,
-    EDualVirtualPitch: number,
     ESymmetricDissonance: number,
     EDroneValue: number,
     votes: number
@@ -86,8 +80,6 @@ function Results() {
     const [symmetricEntropyC, setSymmetricEntropyC] = useState<number>(0);
     const [relativePeriodicityC, setRelativePeriodicityC] = useState<number>(0);
     const [symmetricRelativePeriodicityC, setSymmetricRelativePeriodicityC] = useState<number>(0)
-    const [virtualPitchC, setVirtualPitchC] = useState<number>(0)
-    const [dualVirtualPitchC, setDualVirtualPitchC] = useState<number>(0)
     const [droneValueC, setDroneValueC] = useState<number>(0)
     const [symmetricDissonanceC, setSymmetricDissonanceC] = useState<number>(0)
 
@@ -117,8 +109,6 @@ function Results() {
             let ESymmetricEntropy = 0
             let ERelativePeriodicity = 0
             let ESymmetricRelativePeriodicity = 0
-            let EVirtualPitch = 0
-            let EDualVirtualPitch = 0
             let EDroneValue = 0
             let ESymmetricDissonance = 0
 
@@ -138,8 +128,6 @@ function Results() {
                 const symmetricEntropy = symmetricHarmonicEntropy(chord, space)
                 const relativePeriodicity = chordRelativePeriodicity(chord)
                 const symmRelativePeriodicity = symmetricRelativePeriodicity(chord, space)
-                const dualVPitch = dualVirtualPitch(factors)
-                const vPitch = virtualPitch(factors)
                 const droneValue = chordDroneValue(factors, space)
                 const symmetricDissonance = chordSymmetricDissonance(chord, space)
 
@@ -152,8 +140,6 @@ function Results() {
                 ESymmetricEntropy += symmetricEntropy
                 ERelativePeriodicity += relativePeriodicity
                 ESymmetricRelativePeriodicity += symmRelativePeriodicity
-                EVirtualPitch += vPitch
-                EDualVirtualPitch += dualVPitch
                 EDroneValue += droneValue
                 ESymmetricDissonance += symmetricDissonance
 
@@ -171,8 +157,6 @@ function Results() {
                     symmetricEntropy: symmetricEntropy,
                     relativePeriodicity,
                     symmetricRelativePeriodicity: symmRelativePeriodicity,
-                    virtualPitch: vPitch,
-                    dualVirtualPitch: dualVPitch,
                     symmetricDissonance,
                     droneValue,
                     votes: votes[j]
@@ -191,8 +175,6 @@ function Results() {
                 ESymmetricEntropy,
                 ERelativePeriodicity,
                 ESymmetricRelativePeriodicity,
-                EVirtualPitch,
-                EDualVirtualPitch,
                 ESymmetricDissonance,
                 EDroneValue,
                 votes: totalVotes
@@ -213,8 +195,6 @@ function Results() {
         const symmetricEntropies: Coordinate[] = []
         const relativePeriodicities: Coordinate[] = []
         const symmetricRelativePeriodicities: Coordinate[] = []
-        const virtualPitchValues: Coordinate[] = []
-        const dualVirtualPitchValues: Coordinate[] = []
         const droneValues: Coordinate[] = []
         const symmetricDissonances: Coordinate[] = []
 
@@ -230,8 +210,6 @@ function Results() {
                 symmetricEntropies.push({ x: answer.symmetricEntropy / question.ESymmetricEntropy, y })
                 relativePeriodicities.push({ x: answer.relativePeriodicity / question.ERelativePeriodicity, y })
                 symmetricRelativePeriodicities.push({ x: answer.symmetricRelativePeriodicity / question.ESymmetricRelativePeriodicity, y })
-                virtualPitchValues.push({ x: answer.virtualPitch / question.EVirtualPitch, y })
-                dualVirtualPitchValues.push({ x: answer.dualVirtualPitch / question.EDualVirtualPitch, y })
                 droneValues.push({ x: answer.droneValue / question.EDroneValue, y })
                 symmetricDissonances.push({ x: answer.symmetricDissonance / question.ESymmetricDissonance, y })
             })
@@ -246,8 +224,6 @@ function Results() {
         setSymmetricEntropyC(calculateCorrelation(symmetricEntropies))
         setRelativePeriodicityC(calculateCorrelation(relativePeriodicities))
         setSymmetricRelativePeriodicityC(calculateCorrelation(symmetricRelativePeriodicities))
-        setVirtualPitchC(calculateCorrelation(virtualPitchValues))
-        setDualVirtualPitchC(calculateCorrelation(dualVirtualPitchValues))
         setDroneValueC(calculateCorrelation(droneValues))
         setSymmetricDissonanceC(calculateCorrelation(symmetricDissonances))
 
@@ -411,8 +387,6 @@ function Results() {
                     <th colSpan={2}>Barlow's <br /> harmonicity</th>
                     <th colSpan={2}>Sethares' <br /> dissonance</th>
                     <th colSpan={2}>Erlich's <br /> harmonic <br /> entropy</th>
-                    <th colSpan={2}>Terhardt's <br /> virtual <br /> pitch</th>
-                    <th colSpan={2}>Dual <br /> virtual <br /> pitch</th>
                     <th colSpan={2}>Carmen <br /> Parker's <br /> drone</th>
                     <th colSpan={2}>Stolzenburg <br /> relative <br /> periodicity</th>
                     <th />
@@ -443,10 +417,8 @@ function Results() {
                                 <ModelCells value={answer.harmonicity} total={question.EHarmonicity} decimals={4} />
                                 <ModelCells value={answer.dissonance} total={question.EDissonance} decimals={4} />
                                 <ModelCells value={answer.harmonicEntropy} total={question.EHarmonicEntropy} decimals={4} />
-                                <ModelCells value={answer.virtualPitch} total={question.EVirtualPitch} decimals={0} /> {/* Virtual pitch */}
-                                <ModelCells value={answer.dualVirtualPitch} total={question.EDualVirtualPitch} decimals={0} /> {/* Dual */}
                                 <ModelCells value={answer.droneValue} total={question.EDroneValue} decimals={0} /> {/* Carmen Parker */}
-                                <ModelCells value={answer.relativePeriodicity} total={question.ERelativePeriodicity} decimals={4} />
+                                <ModelCells value={answer.relativePeriodicity} total={question.ERelativePeriodicity} decimals={0} />
                                 <td />
                                 <ModelCells value={answer.symmetricHarmonicDistance} total={question.ESymmetricHarmonicDistance} decimals={4} />
                                 <ModelCells value={answer.symmetricHarmonicity} total={question.ESymmetricHarmonicity} decimals={4} />
@@ -465,8 +437,6 @@ function Results() {
                             <td colSpan={2}>Σ = {question.EHarmonicity.toFixed(4)}</td>
                             <td colSpan={2}>Σ = {question.EDissonance.toFixed(4)}</td>
                             <td colSpan={2}>Σ = {question.EHarmonicEntropy.toFixed(4)}</td>
-                            <td colSpan={2}>Σ = {question.EVirtualPitch.toFixed(0)}</td>
-                            <td colSpan={2}>Σ = {question.EDualVirtualPitch.toFixed(0)}</td>
                             <td colSpan={2}>Σ = {question.EDroneValue.toFixed(0)}</td>
                             <td colSpan={2}>Σ = {question.ERelativePeriodicity.toFixed(0)}</td>
                             <td />
@@ -553,8 +523,6 @@ function Results() {
             <Model a={entropyC} b={symmetricEntropyC} tagA="Harmonic Entropy" tagB="Symmetric Harmonic Entropy"/>
             <Model a={dissonanceC} b={symmetricDissonanceC} tagA="Dissonance" tagB="Symmetric Dissonance"/>
             <Model a={droneValueC}  tagA="Drone" />
-            <Model a={virtualPitchC}  tagA="Virtual Pitch" />
-            <Model a={dualVirtualPitchC}  tagA="Dual Virtual Pitch" />
         </svg>
     }
 
