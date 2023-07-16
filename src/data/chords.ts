@@ -75,41 +75,7 @@ import u10C from "../assets/sounds/10__3.5.7.11_2/14_12_11_10_8_1.mp3";
 import u10D from "../assets/sounds/10__3.5.7.11_2/16_14_12_11_10_1.mp3";
 import u10F from "../assets/sounds/10__3.5.7.11_2/20_16_14_12_11_1.mp3";
 
-const TENNEY = 0; const BARLOW = 1; const SETHARES = 2; const CARMEN = 3; export const PAU: number = 4; const SERIES = 5; const DUAL = 6; const ERLICH = 7;
 export const THEORIES_NAMES = ["Tenney", "Barlow", "Sethares", "Carmen", "Pau", "Terhardt", "Dual", "Erlich"];
-
-export const THEORIES: number[][][] = [
-    // 1 = [3, 5]→2
-    [[SETHARES, SERIES, DUAL], [CARMEN, TENNEY, BARLOW, PAU, ERLICH], []],
-    [[SETHARES, DUAL], [CARMEN, TENNEY, BARLOW, PAU, SERIES, ERLICH], []],
-    // 2 = [3, 7]→2
-    [[CARMEN, TENNEY, BARLOW, SETHARES, PAU, SERIES, DUAL, ERLICH], [], []],
-    [[CARMEN, BARLOW, SERIES, DUAL], [], [TENNEY, SETHARES, PAU, ERLICH]],
-    // 3 = [3, 11]→2
-    [[SETHARES, SERIES, DUAL], [CARMEN, TENNEY, BARLOW, PAU, ERLICH], []],
-    [[SETHARES, DUAL], [CARMEN, TENNEY, BARLOW, PAU, SERIES, ERLICH], []],
-    // 4 = [5, 7]→2
-    [[CARMEN, TENNEY, BARLOW, SETHARES, PAU, SERIES, DUAL, ERLICH], [], []],
-    [[CARMEN, TENNEY, BARLOW, SETHARES, SERIES, DUAL, ERLICH], [], [PAU]],
-    // 5 = [5, 11]→2
-    [[CARMEN, TENNEY, BARLOW, PAU, SERIES, DUAL], [], [SETHARES, ERLICH]],
-    [[CARMEN, BARLOW, SERIES, DUAL], [], [TENNEY, SETHARES, PAU, ERLICH]],
-    // 6 = [5, 7]→3
-    [[CARMEN, TENNEY, BARLOW, SETHARES, PAU, SERIES, DUAL, ERLICH], [], []],
-    [[CARMEN, TENNEY, BARLOW, SETHARES, SERIES, DUAL], [], [PAU, ERLICH]],
-    // 7 = [5, 11]→3
-    [[SERIES, DUAL, ERLICH], [CARMEN, TENNEY, BARLOW, PAU], [SETHARES]],
-    [[DUAL], [CARMEN, TENNEY, BARLOW, PAU, SERIES], [SETHARES, ERLICH]],
-    // 8 = [7, 11]→3
-    [[SERIES, DUAL], [CARMEN, TENNEY, BARLOW, PAU, ERLICH], [SETHARES]],
-    [[DUAL], [CARMEN, TENNEY, BARLOW, SETHARES, PAU, SERIES, ERLICH], []],
-    // 9 = [3, 5, 7]→2
-    [[CARMEN, TENNEY, BARLOW, SETHARES, PAU, SERIES, DUAL, ERLICH], [], [], []],
-    [[CARMEN, BARLOW, SETHARES, SERIES, DUAL], [], [], [TENNEY, PAU, ERLICH]],
-    // 10 = [3, 5, 7, 11]→2
-    [[SETHARES, SERIES, DUAL], [], [CARMEN, TENNEY, BARLOW, PAU, ERLICH], [], []],
-    [[SERIES, DUAL], [TENNEY, PAU], [CARMEN, BARLOW], [], [SETHARES, ERLICH]]
-];
 
 export const chordNames: string[][] = [
     // 1 = [3, 5]→2
@@ -212,74 +178,3 @@ const chords: ChordStruct[] = [
 ];
 
 export default chords;
-
-export const dissonance = [ // Sethares' dissonance
-    [0.0852 / 2, 0.0972 / 2, 0.1002 / 2],
-    [0.0885 / 2, 0.0988 / 2, 0.0955 / 2],
-    [0.0811 / 2, 0.1286 / 2, 0.1021 / 2],
-    [0.0916 / 2, 0.1286 / 2, 0.0904 / 2],
-    [0.0985 / 2, 0.1230 / 2, 0.1376 / 2],
-    [0.0967 / 2, 0.1314 / 2, 0.1306 / 2],
-    [0.0967 / 2, 0.1093 / 2, 0.1310 / 2],
-    [0.0913 / 2, 0.1181 / 2, 0.1273 / 2],
-    [0.1451 / 2, 0.1385 / 2, 0.1014 / 2],
-    [0.1497 / 2, 0.1273 / 2, 0.1090 / 2],
-    [0.0678 / 2, 0.1055 / 2, 0.1002 / 2],
-    [0.0712 / 2, 0.1088 / 2, 0.0931 / 2],
-    [0.0939 / 2, 0.1125 / 2, 0.0877 / 2],
-    [0.1054 / 2, 0.1073 / 2, 0.0839 / 2],
-    [0.1235 / 2, 0.1027 / 2, 0.0911 / 2],
-    [0.1258 / 2, 0.0877 / 2, 0.1030 / 2],
-    [0.1889 / 3, 0.2209 / 3, 0.2201 / 3, 0.2110 / 3],
-    [0.1963 / 3, 0.2266 / 3, 0.2122 / 3, 0.2058 / 3],
-    [0.3757 / 4, 0.4011 / 4, 0.3901 / 4, 0.4376 / 4, 0.3936 / 4],
-    [0.3782 / 4, 0.4187 / 4, 0.4056 / 4, 0.4251 / 4, 0.3707 / 4]
-]
-
-export const mod_tenney = [
-    [23.7386 / 2, 15.3987 / 2, 27.0426 / 2],
-    [23.2125 / 2, 16.3987 / 2, 26.5687 / 2],
-    [17.3696 / 2, 23.7094 / 2, 30.9843 / 2],
-    [25.1542 / 2, 28.5395 / 2, 18.3696 / 2],
-    [27.0136 / 2, 19.6738 / 2, 35.5926 / 2],
-    [30.7625 / 2, 20.6738 / 2, 30.8437 / 2],
-    [20.5805 / 2, 33.8682 / 2, 33.1952 / 2],
-    [30.8391 / 2, 35.2244 / 2, 21.5805 / 2],
-    [22.8846 / 2, 34.1724 / 2, 38.8035 / 2],
-    [33.4474 / 2, 38.5285 / 2, 23.8846 / 2],
-    [12.9374 / 2, 21.7973 / 2, 22.4799 / 2],
-    [19.4098 / 2, 23.8674 / 2, 13.9374 / 2],
-    [22.6201 / 2, 13.7602 / 2, 24.1256 / 2],
-    [21.0555 / 2, 14.7602 / 2, 24.6902 / 2],
-    [25.7640 / 2, 14.6790 / 2, 26.0444 / 2],
-    [22.5869 / 2, 15.6790 / 2, 28.2215 / 2],
-    [26.5984 / 3, 39.8861 / 3, 34.1082 / 3, 45.8278 / 3],
-    [37.9978 / 3, 41.7683 / 3, 38.0561 / 3, 28.5984 / 3],
-    [47.7819 / 4, 60.9464 / 4, 40.1022 / 4, 53.0338 / 4, 69.8588 / 4],
-    [59.0288 / 4, 43.1022 / 4, 55.1163 / 4, 59.2722 / 4, 55.2037 / 4]
-]
-
-export const harmonicity = [
-    [0.4436 / 3, 0.4911 / 3, 0.4200 / 3],
-    [0.4436 / 3, 0.4911 / 3, 0.4200 / 3],
-    [0.4258 / 3, 0.3612 / 3, 0.4149 / 3],
-    [0.4258 / 3, 0.3612 / 3, 0.4149 / 3],
-    [0.3073 / 3, 0.3637 / 3, 0.3031 / 3],
-    [0.3073 / 3, 0.3637 / 3, 0.3031 / 3],
-    [0.2604 / 3, 0.2416 / 3, 0.2509 / 3],
-    [0.2604 / 3, 0.2416 / 3, 0.2509 / 3],
-    [0.2053 / 3, 0.1906 / 3, 0.2017 / 3],
-    [0.2053 / 3, 0.1906 / 3, 0.2017 / 3],
-    [0.2474 / 3, 0.2092 / 3, 0.2260 / 3],
-    [0.2474 / 3, 0.2092 / 3, 0.2260 / 3],
-    [0.1684 / 3, 0.1895 / 3, 0.1601 / 3],
-    [0.1684 / 3, 0.1895 / 3, 0.1601 / 3],
-    [0.1417 / 3, 0.1519 / 3, 0.1343 / 3],
-    [0.1417 / 3, 0.1519 / 3, 0.1343 / 3],
-    [0.7041 / 6, 0.6269 / 6, 0.6471 / 6, 0.6898 / 6],
-    [0.7041 / 6, 0.6269 / 6, 0.6471 / 6, 0.6898 / 6],
-    [0.8143 / 10, 0.8550 / 10, 0.8681 / 10, 0.7888 / 10, 0.8075 / 10],
-    [0.8143 / 10, 0.8550 / 10, 0.8681 / 10, 0.7888 / 10, 0.8075 / 10]
-]
-
-export const distance = [];

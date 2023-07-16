@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "./Results.module.css";
-import { chordNames, THEORIES } from "../../data/chords";
+import { chordNames } from "../../data/chords";
 import json from '../../data/data.json';
 import {
     chordHarmonicDistance,
@@ -94,13 +94,10 @@ function Results() {
     const [symmetricEntropyC, setSymmetricEntropyC] = useState<number>(0);
     const [relativePeriodicityC, setRelativePeriodicityC] = useState<number>(0);
     const [symmetricRelativePeriodicityC, setSymmetricRelativePeriodicityC] = useState<number>(0)
-    const [logarithmicPeriodicityC, setLogarithmicPeriodicityC] = useState<number>(0)
     const [virtualPitchC, setVirtualPitchC] = useState<number>(0)
     const [dualVirtualPitchC, setDualVirtualPitchC] = useState<number>(0)
     const [droneValueC, setDroneValueC] = useState<number>(0)
-    const [symmetricLogarithmicPeriodicityC, setSymmetricLogarithmicPeriodicityC] = useState<number>(0)
     const [symmetricDissonanceC, setSymmetricDissonanceC] = useState<number>(0)
-    const [randomC, setRandomC] = useState<number>(0)
 
     useEffect(() => {
         setVotesData(json);
@@ -278,13 +275,10 @@ function Results() {
         setSymmetricEntropyC(calculateCorrelation(symmetricEntropies))
         setRelativePeriodicityC(calculateCorrelation(relativePeriodicities))
         setSymmetricRelativePeriodicityC(calculateCorrelation(symmetricRelativePeriodicities))
-        setLogarithmicPeriodicityC(calculateCorrelation(logarithmicPeriodicities))
         setVirtualPitchC(calculateCorrelation(virtualPitchValues))
         setDualVirtualPitchC(calculateCorrelation(dualVirtualPitchValues))
         setDroneValueC(calculateCorrelation(droneValues))
-        setSymmetricLogarithmicPeriodicityC(calculateCorrelation(symmetricLogarithmicPeriodicities))
         setSymmetricDissonanceC(calculateCorrelation(symmetricDissonances))
-        setRandomC(calculateCorrelation(randomValues))
 
     }, [modelData])
 
@@ -381,13 +375,11 @@ function Results() {
                             {chord.map((name: string, j: number) => {
                                 let ratio = getRatio(i, j);
                                 if (ratio > 0) {
-                                    let theories = THEORIES[i][j];
                                     return <div
                                         key={j}
                                         className={styles.name}
                                         style={{
                                             width: `${getRatio(i, j)}%`,
-                                            background: theories?.includes(4) ? 'red' : '',
                                             minHeight: '40px',
                                             display: 'flex',
                                             flexDirection: 'row',
@@ -407,59 +399,13 @@ function Results() {
                                         alignItems: 'center'
                                     }}
                                 >
-                                    {noResponseRatio > 0 && `NS/NC[${absoluteResponses[i][chord.length]}] - ${noResponseRatio.toFixed(2)}`}
+                                    {noResponseRatio > 0 && `N/R[${absoluteResponses[i][chord.length]}] - ${noResponseRatio.toFixed(2)}`}
                                 </div>}
                         </div>
                     </div>
                 })}
             </div>
         )
-    }
-
-    const CorrelationTable = () => {
-        const CorrelationRow = (props: { tag: string, value: number, symmetric: boolean} ) => {
-            return <tr style={{height: '20px'}}>
-                <td style={{textAlign: 'right'}}>{props.tag}</td>
-                <td style={{width: '400px'}}>
-                    <div 
-                        style={{
-                            height: '100%',
-                            width: `${Math.abs(props.value)*100}%`,
-                            backgroundColor: props.symmetric ? '#4863A0' : '#728FCE'
-                        }}
-                    >
-                        <div
-                            style={{
-                                textAlign: 'left',
-                                transform: 'translateX(100%)',
-                                paddingLeft: '5px'
-                            }}
-                        >
-                            |{props.value.toFixed(4)}|
-                        </div>
-                    </div>
-                </td>
-            </tr>
-        }
-
-        return <div className={styles.Section}>
-            <table>
-                <CorrelationRow tag="Symmetric Harmonicity" value={symmetricHarmonicityC} symmetric={true}/>
-                <CorrelationRow tag="Symmetric Harmonic Distance" value={symmetricDistanceC} symmetric={true}/>
-                <CorrelationRow tag="Symmetric Relative Periodicity" value={symmetricRelativePeriodicityC} symmetric={true} />
-                <CorrelationRow tag="Barlow's Harmonicity" value={harmonicityC} symmetric={false} />
-                <CorrelationRow tag="Parker's Drone" value={droneValueC} symmetric={false} />
-                <CorrelationRow tag="Erlich's Entropy" value={entropyC} symmetric={false} />
-                <CorrelationRow tag="Tenney's Harmonic Distance" value={harmonicDistanceC} symmetric={false} />
-                <CorrelationRow tag="Stolzenburg's Relative Periodicity" value={relativePeriodicityC} symmetric={false} />
-                <CorrelationRow tag="Sethares' Dissonance" value={dissonanceC} symmetric={false} />
-                <CorrelationRow tag="Terhardt's Virtual Pitch" value={virtualPitchC} symmetric={false} />
-                {/* <CorrelationRow tag="Stolzenburg's Logarithmic Periodicity" value={logarithmicPeriodicityC} symmetric={false} /> */}
-                <CorrelationRow tag="Dual Virtual Pitch" value={dualVirtualPitchC} symmetric={false} />
-                {/* <CorrelationRow tag="Symmetric Logarithmic Periodicity" value={symmetricLogarithmicPeriodicityC} symmetric={true} /> */}
-                <CorrelationRow tag="Symmetric Entropy" value={symmetricEntropyC} symmetric={true} />
-            </table>
-        </div>
     }
 
     const ModelValuesTable = () => {
@@ -646,7 +592,6 @@ function Results() {
     return (
         <div id={styles.Results}>
             <GraphicCorrelationTable />
-            <CorrelationTable />
             <ModelValuesTable />
             
             <div className={styles.Section}>
