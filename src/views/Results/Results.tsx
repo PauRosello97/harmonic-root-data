@@ -22,7 +22,7 @@ import {
     chordDroneValue
 } from "../../utils/models";
 import { Interval, Space } from "../../utils/models";
-import { calculateCorrelation, getRandomNumber } from "../../utils/math";
+import { calculateCorrelation } from "../../utils/math";
 
 /*
 Comprovar si hi ha alguna relació entre el temperament d'un espai i la confiança.
@@ -45,7 +45,6 @@ interface AnswerData {
     symmetricRelativePeriodicity: number,
     virtualPitch: number,
     dualVirtualPitch: number,
-    random: number,
     droneValue: number,
     symmetricDissonance: number,
     votes: number
@@ -66,7 +65,6 @@ interface QuestionData {
     EVirtualPitch: number,
     EDualVirtualPitch: number,
     ESymmetricDissonance: number,
-    ERandom: number,
     EDroneValue: number,
     votes: number
 }
@@ -119,7 +117,6 @@ function Results() {
             let ESymmetricEntropy = 0
             let ERelativePeriodicity = 0
             let ESymmetricRelativePeriodicity = 0
-            let ERandom = 0
             let EVirtualPitch = 0
             let EDualVirtualPitch = 0
             let EDroneValue = 0
@@ -145,7 +142,6 @@ function Results() {
                 const vPitch = virtualPitch(factors)
                 const droneValue = chordDroneValue(factors, space)
                 const symmetricDissonance = chordSymmetricDissonance(chord, space)
-                const random = getRandomNumber(answer)
 
                 EHarmonicity += harmonicity
                 EDissonance += dissonance
@@ -158,7 +154,6 @@ function Results() {
                 ESymmetricRelativePeriodicity += symmRelativePeriodicity
                 EVirtualPitch += vPitch
                 EDualVirtualPitch += dualVPitch
-                ERandom += random
                 EDroneValue += droneValue
                 ESymmetricDissonance += symmetricDissonance
 
@@ -180,7 +175,6 @@ function Results() {
                     dualVirtualPitch: dualVPitch,
                     symmetricDissonance,
                     droneValue,
-                    random,
                     votes: votes[j]
                 }
             })
@@ -200,7 +194,6 @@ function Results() {
                 EVirtualPitch,
                 EDualVirtualPitch,
                 ESymmetricDissonance,
-                ERandom,
                 EDroneValue,
                 votes: totalVotes
             }
@@ -221,7 +214,6 @@ function Results() {
         const relativePeriodicities: Coordinate[] = []
         const symmetricRelativePeriodicities: Coordinate[] = []
         const virtualPitchValues: Coordinate[] = []
-        const randomValues: Coordinate[] = []
         const dualVirtualPitchValues: Coordinate[] = []
         const droneValues: Coordinate[] = []
         const symmetricDissonances: Coordinate[] = []
@@ -241,7 +233,6 @@ function Results() {
                 virtualPitchValues.push({ x: answer.virtualPitch / question.EVirtualPitch, y })
                 dualVirtualPitchValues.push({ x: answer.dualVirtualPitch / question.EDualVirtualPitch, y })
                 droneValues.push({ x: answer.droneValue / question.EDroneValue, y })
-                randomValues.push({ x: answer.random / question.ERandom, y })
                 symmetricDissonances.push({ x: answer.symmetricDissonance / question.ESymmetricDissonance, y })
             })
         })
