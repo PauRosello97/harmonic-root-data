@@ -4,20 +4,20 @@ import { chordNames } from "../../data/chords";
 import json from '../../data/data.json';
 import {
     Chord,
-    chordHarmonicDistance,
-    chordHarmonicity,
+    chordToSuperChord,
     factorsToSpace,
     factorsToChord,
+    chordHarmonicDistance,
+    chordHarmonicity,
     chordDissonance,
     chordHarmonicEntropy,
+    chordRelativePeriodicity,
+    chordDroneValue,
     chordSymmetricHarmonicity,
     chordSymmetricHarmonicDistance,
-    chordToSuperChord,
     chordSymmetricHarmonicEntropy,
-    chordRelativePeriodicity,
     chordSymmetricRelativePeriodicity,
     chordSymmetricDissonance,
-    chordDroneValue
 } from "../../utils/models";
 import { Interval, Space } from "../../utils/models";
 import { calculateCorrelation } from "../../utils/math";
