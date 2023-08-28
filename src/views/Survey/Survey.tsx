@@ -29,7 +29,7 @@ function Survey() {
     }, []);
 
     useEffect(() => {
-        setNextEnabled(data[displaying] != undefined);
+        setNextEnabled(data[displaying] !== undefined);
     }, [data, displaying]);
 
     const updateData = (position: number, value: number) => {
@@ -49,6 +49,7 @@ function Survey() {
     const submit = () => {
         let duration = 0;
         if (startTime) duration = (new Date()).valueOf() - startTime?.valueOf();
+        console.log(duration)
         setSubmitted(true)
         // sendData(data, OMSI, duration, email).then((response: any);
     }
@@ -81,7 +82,7 @@ function Survey() {
                     </div>
                     <div className={styles.chordContainer}>
                         {chords.map((chord: ChordStruct, i: number) => {
-                            if (i == displaying) {
+                            if (i === displaying) {
                                 return <Chord key={i} n={i} src={chord.src} direction={directions[i]} updateData={(value: number) => updateData(i, value)} data={data} />
                             }
                         })}
@@ -91,7 +92,7 @@ function Survey() {
                             Next
                             <FontAwesomeIcon icon={faArrowRight} />
                         </div>}
-                        {nextEnabled && displaying == (chords.length - 1) && <div className={styles.submitButton} onClick={submit}>
+                        {nextEnabled && displaying ===(chords.length - 1) && <div className={styles.submitButton} onClick={submit}>
                             Submit
                             <FontAwesomeIcon icon={faThumbsUp} />
                         </div>}

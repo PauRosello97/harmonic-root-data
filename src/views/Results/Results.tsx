@@ -22,6 +22,8 @@ import {
 import { Interval, Space } from "../../utils/models";
 import { calculateCorrelation } from "../../utils/math";
 
+const modelPredictions = [1, 1, 0, 2, 1, 1, 0, 2, 0, 2, 0, 2, 1, 1, 1, 1, 0, 3, 2, 1]
+
 /*
 Comprovar si hi ha alguna relació entre el temperament d'un espai i la confiança.
 Perquè 11/8 i 3/2 no es porten bé? Pot coincidir amb el que diu el reviewer
@@ -240,10 +242,15 @@ function Results() {
             _absoluteResponses[i].push(0)
         })
 
+        const omsiPredicatibilities: { x: number, y: number }[] = []
+        const durationPredicatibilities: { x: number, y: number }[] = []
+        
         votesData.forEach((person) => {
+            let predictedResponses = 0;
             person.responses.forEach((response: number, i: number) => {
                 if (!_countResponses[i]) _countResponses[i] = 0;
                 if (response !== -1) _countResponses[i]++;
+                if (response === modelPredictions[i]) predictedResponses++;
 
                 if (!_absoluteResponses[i]) {
                     _absoluteResponses[i] = new Array(chordNames[i].length + 1);
@@ -255,7 +262,13 @@ function Results() {
 
                 setAbsoluteResponses(_absoluteResponses);
             })
+            omsiPredicatibilities.push({ x: predictedResponses, y: person.omsi })
+            durationPredicatibilities.push({ x: predictedResponses, y: person.duration })
         })
+
+        console.log('omsi', calculateCorrelation(omsiPredicatibilities))
+        console.log('duration', calculateCorrelation(durationPredicatibilities))
+
         setCountResponses(_countResponses);
     }, [votesData]);
 
