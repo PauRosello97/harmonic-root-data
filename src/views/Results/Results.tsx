@@ -510,7 +510,7 @@ function Results() {
             </>
         }
 
-        return <svg style={{position: 'relative', border: '1px solid black', width: `${w}px`, height: `${h}px` }}>
+        return <svg style={{ position: 'relative', marginBottom: '-30px', width: `${w}px`, height: `${h}px` }}>
 
             <line x1={25} x2={w} y1={ratioToY(0.8)} y2={ratioToY(0.8)} stroke='grey' />
             <line x1={25} x2={w} y1={ratioToY(0.6)} y2={ratioToY(0.6)} stroke='grey' />
@@ -539,13 +539,40 @@ function Results() {
         </svg>
     }
 
+    const Abstract = () => {
+        return <div style={{ maxWidth: '600px' }}>
+            <div style={{ fontSize: '25px', marginBottom: '20px' }}>
+                <b>Formalized Harmony: Fundamental Chords in Extended Just Intonation</b> - Pau Roselló
+            </div>
+            <div style={{ marginBottom: '40px', fontSize: '14px' }}>
+                Different theories have been proposed to explain the perception of a root in a pitch set, with Terhardt's virtual pitch theory being the one generally considered most plausible, despite none of them having been confirmed empirically. Understanding the perceived root phenomenon is an essential component in explaining the origin of the major and minor triads as the most fundamental chords in twelve-tone equal temperament or 5-limit just intonation, as well as in proposing new chords for new tunings. This music perception study, in which 42 participants rated chords in 10 different tunings, empirically establishes harmonic dualism, negative harmony and Barlow's harmonicity as the key factors for the perception of the harmonic root and the origin of the major and minor triads, and proposes a model as a basis for a tuning-agnostic - trans-spatial - music theory.
+            </div>
+        </div>
+    }
+
     return (
         <div id={styles.Results}>
+            <Abstract />
+
+            <div style={{ maxWidth: '600px', fontSize: '20px', marginBottom: '20px' }}>
+                <b>Correlation of the models</b>
+            </div>
             <GraphicCorrelationTable />
+
+            <div style={{ maxWidth: '600px', fontSize: '20px', marginBottom: '20px' }}>
+                <b>Model values</b>
+            </div>
             <ModelValuesTable />
-            
+
+            <div style={{ maxWidth: '600px', fontSize: '20px', marginBottom: '20px' }}>
+                <b>Distribution of participants' choices</b>
+            </div>
             <div className={styles.Section}>
                 <Ratios />
+            </div>
+
+            <div style={{ maxWidth: '600px', fontSize: '20px', marginBottom: '20px' }}>
+                <b>Raw data</b>
             </div>
             <div className={styles.Section}>
                 <Table />

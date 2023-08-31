@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from 'react';
 import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Link
 } from "react-router-dom";
 import Survey from "./views/Survey/Survey";
 import Results from "./views/Results/Results";
@@ -14,8 +12,8 @@ function App() {
     <Router basename={'/chords'}>
       <div className="app-container">
         <Routes>
-          <Route path="/" element={<Survey />} />
-          <Route path="/results" element={<Results />} />
+          <Route path="/" element={<Results />} />
+          <Route path="/survey" element={<Survey />} />
         </Routes>
       </div>
     </Router>
